@@ -1,0 +1,17 @@
+/colormap.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/cursor.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/dix.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/gc.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/input.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/misc.h/1.2/Wed Aug 27 04:44:13 2003//
+/miscstruct.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/opaque.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/os.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/pixmap.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/region.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/regionstr.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/screenint.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/scrnintstr.h/1.2/Tue Jan 21 17:30:37 2003//
+/validate.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+/window.h/1.1.1.1/Fri Aug  2 23:49:39 2002//
+D
