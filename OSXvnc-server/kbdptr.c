@@ -146,7 +146,8 @@ void PtrAddEvent(int buttonMask, int x, int y, rfbClientPtr cl) {
         // A - User changes his setting in SysPrefs
         // B - Running OSXvnc as root and user swiches
 
-        mouseWheelDistance = 8 * [currentUserDefs floatForKey:@"com.apple.scrollwheel.scaling"];
+        mouseWheelDistance = 1;
+        //mouseWheelDistance = 8 * [currentUserDefs floatForKey:@"com.apple.scrollwheel.scaling"];
         if (!mouseWheelDistance)
             mouseWheelDistance = 10;
 

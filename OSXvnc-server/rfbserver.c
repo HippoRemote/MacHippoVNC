@@ -1006,6 +1006,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 						NSDictionary  *errors;
 						NSAppleEventDescriptor *result = NULL;
 						result = [script executeAndReturnError:&errors];
+						[script release];
 					}
 					
 					keyCode = keyCode & 0x0ff;
@@ -1177,6 +1178,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 						
 						if (appFound == YES) {
 							[[NSWorkspace sharedWorkspace] launchApplication:profile];
+							[NSThread sleepForTimeInterval:0.1];
 						}
 						
 						CGEventPost(kCGHIDEventTap, keyEventDown);
@@ -1213,7 +1215,16 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 			NSString *profile = [[NSString alloc] initWithBytes:cl->profile length:length encoding:NSUTF16BigEndianStringEncoding];
-			[[NSWorkspace sharedWorkspace] launchApplication:profile];
+			if ([profile hasPrefix:@"Front Row"]) {
+				NSAppleScript *script = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 53 using command down"];
+				NSDictionary  *errors;
+				NSAppleEventDescriptor *result = NULL;
+				result = [script executeAndReturnError:&errors];
+				[script release];
+			}				
+			else {	
+				[[NSWorkspace sharedWorkspace] launchApplication:profile];
+			}
 			[profile release];
 
 			[pool release];
