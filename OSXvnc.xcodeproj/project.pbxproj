@@ -1160,7 +1160,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "# Bump the version for the NEXT release -- This one uses the prior value\n/Developer/Tools/agvtool bump";
+			shellScript = "# Bump the version for the NEXT release -- This one uses the prior value\n/usr/bin/agvtool bump";
 		};
 		AB139E5C0CEA05C200EE873A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
