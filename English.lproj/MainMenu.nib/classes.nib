@@ -115,6 +115,8 @@
 				<string>NSPopUpButton</string>
 				<key>dontDisconnectCheckbox</key>
 				<string>NSButton</string>
+				<key>enableAppLaunchingCheckbox</key>
+				<string>NSButton</string>
 				<key>eventSourcePopup</key>
 				<string>NSPopUpButton</string>
 				<key>hostNamesBox</key>

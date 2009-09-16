@@ -1050,59 +1050,67 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 				}
 				
 				if (keyEventDown != NULL) {
-					// Get active application.
-					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-					
-					NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
-					NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
-					BOOL      switchProfile = (msg.ke.down >= 128);
-
-					if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
-						CGEventPost(kCGHIDEventTap, keyEventDown);
-						//CGEventSetFlags(keyEventDown, 256);
-					}
-					else {
-						BOOL appFound = NO;
+					if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
+						// Get active application.
+						NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 						
-						NSArray *launchedAppsArray = [[NSWorkspace sharedWorkspace] launchedApplications];
-						if (launchedAppsArray) {
-							NSEnumerator *launchedAppsEnumerator = [launchedAppsArray objectEnumerator];
-							NSDictionary *launchedAppDictionary;
-							while ((launchedAppDictionary = [launchedAppsEnumerator nextObject])) {
-								NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
-								if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
-									appFound = YES;
-									break;
+						NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
+						NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
+						BOOL      switchProfile = (msg.ke.down >= 128);
 
-									/*
-									NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
-									NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
-									if( processSerialNumberLow && processSerialNumberHigh )
-									{
+						if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
+							CGEventPost(kCGHIDEventTap, keyEventDown);
+							//CGEventSetFlags(keyEventDown, 256);
+						}
+						else {
+							BOOL appFound = NO;
+							
+							NSArray *launchedAppsArray = [[NSWorkspace sharedWorkspace] launchedApplications];
+							if (launchedAppsArray) {
+								NSEnumerator *launchedAppsEnumerator = [launchedAppsArray objectEnumerator];
+								NSDictionary *launchedAppDictionary;
+								while ((launchedAppDictionary = [launchedAppsEnumerator nextObject])) {
+									NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
+									if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 										appFound = YES;
-										ProcessSerialNumber processSerialNumber;
-										processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
-										processSerialNumber.lowLongOfPSN = [processSerialNumberLow unsignedLongValue];
-										
-										CGEventPostToPSN( &processSerialNumber, keyEventDown );
+										break;
+
+										/*
+										NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
+										NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
+										if( processSerialNumberLow && processSerialNumberHigh )
+										{
+											appFound = YES;
+											ProcessSerialNumber processSerialNumber;
+											processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
+											processSerialNumber.lowLongOfPSN = [processSerialNumberLow unsignedLongValue];
+											
+											CGEventPostToPSN( &processSerialNumber, keyEventDown );
+										}
+										*/
 									}
-									*/
 								}
 							}
-						}
+							
+							if (appFound == YES) {
+								[[NSWorkspace sharedWorkspace] launchApplication:profile];
+							}
 						
-						if (appFound == YES) {
-							[[NSWorkspace sharedWorkspace] launchApplication:profile];
+							
+							CGEventPost(kCGHIDEventTap, keyEventDown);
+							//CGEventSetFlags(keyEventDown, 256);
 						}
-					
 						[profile release];
 						
-						CGEventPost(kCGHIDEventTap, keyEventDown);
-						//CGEventSetFlags(keyEventDown, 256);
+						CFRelease(keyEventDown);
+						[pool release];
 					}
-					
-					CFRelease(keyEventDown);
-					[pool release];
+					else
+					{
+						CGEventPost(kCGHIDEventTap, keyEventDown);
+						CFRelease(keyEventDown);
+					}
+
 				}
 			}
 			
@@ -1138,56 +1146,63 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					//NSUInteger flags = CGEventGetFlags(keyEventDown);
 					//NSLog(@"modifier flags: %d", flags);
 					
-					// Get active application.
-					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-						
-					NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
-					NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
-					BOOL      switchProfile = (msg.ke.down >= 128);
-						
-					if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
-						CGEventPost(kCGHIDEventTap, keyEventDown);
-					}
-					else {
-						BOOL appFound = NO;
-						
-						NSArray *launchedAppsArray = [[NSWorkspace sharedWorkspace] launchedApplications];
-						if (launchedAppsArray) {
-							NSEnumerator *launchedAppsEnumerator = [launchedAppsArray objectEnumerator];
-							NSDictionary *launchedAppDictionary;
-							while ((launchedAppDictionary = [launchedAppsEnumerator nextObject])) {
-								NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
-								if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
-									appFound = YES;
-									break;
-									
-									/*
-									 NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
-									 NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
-									 if( processSerialNumberLow && processSerialNumberHigh )
-									 {
-									 appFound = YES;
-									 ProcessSerialNumber processSerialNumber;
-									 processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
-									 processSerialNumber.lowLongOfPSN = [processSerialNumberLow unsignedLongValue];
-									 
-									 CGEventPostToPSN( &processSerialNumber, keyEventDown );
-									 }
-									 */
+					if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
+						// Get active application.
+						NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+							
+						NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
+						NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
+						BOOL      switchProfile = (msg.ke.down >= 128);
+							
+						if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
+							CGEventPost(kCGHIDEventTap, keyEventDown);
+						}
+						else {
+							BOOL appFound = NO;
+							
+							NSArray *launchedAppsArray = [[NSWorkspace sharedWorkspace] launchedApplications];
+							if (launchedAppsArray) {
+								NSEnumerator *launchedAppsEnumerator = [launchedAppsArray objectEnumerator];
+								NSDictionary *launchedAppDictionary;
+								while ((launchedAppDictionary = [launchedAppsEnumerator nextObject])) {
+									NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
+									if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+										appFound = YES;
+										break;
+										
+										/*
+										 NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
+										 NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
+										 if( processSerialNumberLow && processSerialNumberHigh )
+										 {
+										 appFound = YES;
+										 ProcessSerialNumber processSerialNumber;
+										 processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
+										 processSerialNumber.lowLongOfPSN = [processSerialNumberLow unsignedLongValue];
+										 
+										 CGEventPostToPSN( &processSerialNumber, keyEventDown );
+										 }
+										 */
+									}
 								}
 							}
+							
+							if (appFound == YES) {
+								[[NSWorkspace sharedWorkspace] launchApplication:profile];
+								[NSThread sleepForTimeInterval:0.1];
+							}
+							
+							CGEventPost(kCGHIDEventTap, keyEventDown);
 						}
 						
-						if (appFound == YES) {
-							[[NSWorkspace sharedWorkspace] launchApplication:profile];
-							[NSThread sleepForTimeInterval:0.1];
-						}
-						
-						CGEventPost(kCGHIDEventTap, keyEventDown);
+						CFRelease(keyEventDown);
+						[pool release];
 					}
-					
-					CFRelease(keyEventDown);
-					[pool release];
+					else
+					{
+						CGEventPost(kCGHIDEventTap, keyEventDown);
+						CFRelease(keyEventDown);
+					}
 				}
 			}
 			
@@ -1217,15 +1232,17 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 			NSString *profile = [[NSString alloc] initWithBytes:cl->profile length:length encoding:NSUTF16BigEndianStringEncoding];
-			if ([profile hasPrefix:@"Front Row"]) {
-				NSAppleScript *script = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 53 using command down"];
-				NSDictionary  *errors;
-				NSAppleEventDescriptor *result = NULL;
-				result = [script executeAndReturnError:&errors];
-				[script release];
-			}				
-			else {	
-				[[NSWorkspace sharedWorkspace] launchApplication:profile];
+			if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
+				if ([profile hasPrefix:@"Front Row"]) {
+					NSAppleScript *script = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 53 using command down"];
+					NSDictionary  *errors;
+					NSAppleEventDescriptor *result = NULL;
+					result = [script executeAndReturnError:&errors];
+					[script release];
+				}				
+				else {	
+					[[NSWorkspace sharedWorkspace] launchApplication:profile];
+				}
 			}
 			[profile release];
 

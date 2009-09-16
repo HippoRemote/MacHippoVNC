@@ -196,6 +196,7 @@ NSMutableArray *localIPAddresses() {
 		@"YES", @"startServerOnLaunch",
 		@"NO", @"terminateOnFastUserSwitch",
 		@"YES", @"serverKeepAlive",
+	    @"YES", @"enableAppLaunching",
 		
 		@"Default", @"protocolVersion",
 		@"",@"otherArguments",
@@ -801,6 +802,7 @@ NSMutableArray *localIPAddresses() {
 	[allowDimmingCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"allowDimming"]];
     [allowScreenSaverCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"allowScreenSaver"]];
 	[swapMouseButtonsCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"swapButtons"]];
+	[enableAppLaunchingCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]];
 	[keyboardLayout selectItemAtIndex:[keyboardLayout indexOfItemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"keyboardLayout"]]];
 	[keyboardEvents selectItemAtIndex:[keyboardEvents indexOfItemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"keyboardEvents"]]];	
 	[eventSourcePopup selectItemAtIndex:[eventSourcePopup indexOfItemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"eventSource"]]];	
@@ -862,6 +864,7 @@ NSMutableArray *localIPAddresses() {
     [[NSUserDefaults standardUserDefaults] setBool:[startServerOnLaunchCheckbox state] forKey:@"startServerOnLaunch"];
     [[NSUserDefaults standardUserDefaults] setBool:[terminateOnFastUserSwitch state] forKey:@"terminateOnFastUserSwitch"];
     [[NSUserDefaults standardUserDefaults] setBool:[serverKeepAliveCheckbox state] forKey:@"serverKeepAlive"];
+    [[NSUserDefaults standardUserDefaults] setBool:[enableAppLaunchingCheckbox state] forKey:@"enableAppLaunching"];
 
     [[NSUserDefaults standardUserDefaults] setBool:[allowSleepCheckbox state] forKey:@"allowSleep"];
     [[NSUserDefaults standardUserDefaults] setBool:[allowDimmingCheckbox state] forKey:@"allowDimming"];

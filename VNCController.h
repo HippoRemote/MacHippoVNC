@@ -91,6 +91,7 @@
     IBOutlet NSButton *startServerOnLaunchCheckbox;
     IBOutlet NSButton *terminateOnFastUserSwitch;
     IBOutlet NSButton *serverKeepAliveCheckbox;
+    IBOutlet NSButton *enableAppLaunchingCheckbox;
 
 
 	// Reverse Connections UI
