@@ -3,7 +3,7 @@
 "No Authentication"="no password protection";
 "Startup Item Configured (Started)"="The System Server is running";
 "Startup Item Disabled (Stopped)"="The System Server is not running";
-"Vine Server can't listen on the specified port (%d)."="The port you chose (%d) is not available.";
+"HippoVNC can't listen on the specified port (%d)."="The port you chose (%d) is not available.";
 "Probably because the OSXvnc server is already running as a Startup Item." = "(You may already be running a System Server on this port)";
 "Probably because another VNC is already using this port." = "(There is already a VNC server running on this port)";
 "Option Change Requires a Restart" = "Restart Server to Affect Changes";

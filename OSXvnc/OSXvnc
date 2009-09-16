@@ -9,14 +9,14 @@
 
 VNCPATH="/Library/StartupItems/OSXvnc"
 VNCARGS="-rfbport 5900 -rfbauth $VNCPATH/.osxvncauth -swapButtons -dontdisconnect"
-VNCLOG="/Library/Logs/VineServer.log"
+VNCLOG="/Library/Logs/HippoVNC.log"
 
 #
 # Modification Log:
 #
 # 3.0
 # Removed dash from ps -auxwww for 10.5 compatibility
-# Added VNCLOG path, set to /Library/Logs/VineServer.log
+# Added VNCLOG path, set to /Library/Logs/HippoVNC.log
 #
 # 1.6
 # Added missing backslashes to the Awk command when stopping OSXvnc-keepalive

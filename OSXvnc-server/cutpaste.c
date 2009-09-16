@@ -198,7 +198,7 @@ static BOOL debugPB = NO;
 				// create path to file(s) in /tmp
 				NSFileManager *fileManager = [NSFileManager defaultManager];
 				if (!clientPointer->receivedFileTempFolder) {
-					clientPointer->receivedFileTempFolder = [[@"/tmp/Vine-" stringByAppendingString:[[NSProcessInfo processInfo] globallyUniqueString]] retain];
+					clientPointer->receivedFileTempFolder = [[@"/tmp/HippoVNC-" stringByAppendingString:[[NSProcessInfo processInfo] globallyUniqueString]] retain];
 					[fileManager ensureDirectoryAtPath:clientPointer->receivedFileTempFolder attributes:nil];
 				}
 				// write the files

@@ -9,7 +9,7 @@
 "Start Server" = "Avvia Server";
 "Restart Server" = "Riavvia il Server";
 "The server is stopped." = "Il server è fermo.";
-"Probably because the OSXvnc server is already running as a Startup Item." = "Probabilmente perché il server Vine è già avviato all'avvio del Mac";
+"Probably because the OSXvnc server is already running as a Startup Item." = "Probabilmente perché il HippoVNC è già avviato all'avvio del Mac";
 "Probably because another VNC is already using this port." = "Probabilmente perché un altro VNC sta usando questa porta.";
 "The server has stopped running. See Log (%d)\n" = "Il server si è fermato. Consulta il resoconto (%d)\n";
 "The server has stopped running." = "Il server si è fermato.";

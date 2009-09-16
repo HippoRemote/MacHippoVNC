@@ -1091,7 +1091,7 @@ int main(int argc, char *argv[]) {
 
     loadKeyTable();
 
-	[[NSUserDefaults standardUserDefaults] addSuiteNamed:@"com.redstonesoftware.VineServer"];
+	[[NSUserDefaults standardUserDefaults] addSuiteNamed:@"com.robohippo.hippovnc"];
 	
     processArguments(argc, argv);
 

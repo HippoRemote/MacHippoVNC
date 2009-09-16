@@ -204,7 +204,7 @@ NSMutableArray *localIPAddresses() {
 		@"NO", @"localhostOnlySystemServer",
 		
 		@"/Library/StartupItems/OSXvnc", @"startupItemLocation",
-		@"/Library/LaunchAgents/com.redstonesoftware.VineServer.plist", @"launchdItemLocation",
+		@"/Library/LaunchAgents/com.robohippo.hippovnc.plist", @"launchdItemLocation",
 		
 		@"http://www.whatismyip.com/automation/n09230945.asp", @"externalIPURL",
         nil]];
@@ -233,11 +233,11 @@ NSMutableArray *localIPAddresses() {
 
 - (IBAction) terminateRequest: sender {
 	if ([clientList count] && !shutdownSignal)
-		NSBeginAlertSheet(LocalizedString(@"Quit Vine Server"),
+		NSBeginAlertSheet(LocalizedString(@"Quit HippoVNC"),
 						  LocalizedString(@"Cancel"), 
 						  LocalizedString(@"Quit"), 
 						  nil, statusWindow, self, @selector(terminateSheetDidEnd:returnCode:contextInfo:), NULL, NULL, 
-						  LocalizedString(@"Disconnect %d clients and quit Vine Server?"), [clientList count]);
+						  LocalizedString(@"Disconnect %d clients and quit HippoVNC?"), [clientList count]);
 	else 
 		[NSApp terminate: self];
 }
@@ -469,9 +469,9 @@ NSMutableArray *localIPAddresses() {
 - (void) determinePasswordLocation {
     NSArray *passwordFiles = [NSArray arrayWithObjects:
         [[NSUserDefaults standardUserDefaults] stringForKey:@"PasswordFile"],
-		@"~/.vinevncauth",
-        [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@".vinevncauth"],
-        @"/tmp/.vinevncauth",
+		@"~/.hippovncauth",
+        [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@".hippovncauth"],
+        @"/tmp/.hippovncauth",
         nil];
     NSEnumerator *passwordEnumerators = [passwordFiles objectEnumerator];
 	
@@ -490,10 +490,10 @@ NSMutableArray *localIPAddresses() {
 - (void) determineLogLocation {
 	NSArray *logFiles = [NSArray arrayWithObjects:
         [[NSUserDefaults standardUserDefaults] stringForKey:@"LogFile"],
-		@"~/Library/Logs/VineServer.log",
-        @"/var/log/VineServer.log",
-        @"/tmp/VineServer.log",
-        [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"VineServer.log"],
+		@"~/Library/Logs/HippoVNC.log",
+        @"/var/log/HippoVNC.log",
+        @"/tmp/HippoVNC.log",
+        [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"HippoVNC.log"],
         nil];
     NSEnumerator *logEnumerators = [logFiles objectEnumerator];
 	
@@ -1020,7 +1020,7 @@ NSMutableArray *localIPAddresses() {
     if (userStopped)
         [statusMessageField setStringValue:LocalizedString(@"The server is stopped.")];
     else if ([controller terminationStatus]==250) {
-		NSMutableString *messageString = [NSMutableString stringWithFormat: LocalizedString(@"Vine Server can't listen on the specified port (%d)."), [self runningPortNum]];
+		NSMutableString *messageString = [NSMutableString stringWithFormat: LocalizedString(@"HippoVNC can't listen on the specified port (%d)."), [self runningPortNum]];
 		[messageString appendString:@"\n"];
 		if (systemServerIsConfigured)
 			[messageString appendString:LocalizedString(@"Probably because the VNC server is already running as a Startup Item.")];
@@ -1509,7 +1509,7 @@ NSMutableArray *localIPAddresses() {
 }
 
 - (IBAction) openReleaseNotes:(id) sender {
-    NSString *openPath = [[NSBundle mainBundle] pathForResource:@"Vine Server Release Notes" ofType:@"rtf"];
+    NSString *openPath = [[NSBundle mainBundle] pathForResource:@"HippoVNC Release Notes" ofType:@"rtf"];
 	
     [[NSWorkspace sharedWorkspace] openFile:openPath];
 }
@@ -1629,14 +1629,14 @@ NSMutableArray *localIPAddresses() {
 		NSString *oldDesktopName = [systemServerDisplayNameField stringValue];
 			
 		if ([vncauth length]) {
-			NSArray *mvArguments = [NSArray arrayWithObjects:@"-f", @"/tmp/.vinevncauth", @"/Library/StartupItems/OSXvnc/.vinevncauth", nil];
+			NSArray *mvArguments = [NSArray arrayWithObjects:@"-f", @"/tmp/.hippovncauth", @"/Library/StartupItems/OSXvnc/.hippovncauth", nil];
 
-			[vncauth writeToFile:@"/tmp/.vinevncauth" atomically:YES];
+			[vncauth writeToFile:@"/tmp/.hippovncauth" atomically:YES];
 			if (![myAuthorization executeCommand:@"/bin/mv" withArgs:mvArguments]) {
 				[startupItemStatusMessageField setStringValue:LocalizedString(@"Error: Unable To Setup Password File")];
 				return FALSE;
 			}
-			passwordFile = @"/Library/StartupItems/OSXvnc/.vinevncauth";
+			passwordFile = @"/Library/StartupItems/OSXvnc/.hippovncauth";
 		}
 		
 		// Coerce the CommandLine string with slight modifications
@@ -1689,29 +1689,29 @@ NSMutableArray *localIPAddresses() {
 	BOOL success = TRUE;
 	NSMutableDictionary *launchdDictionary = [NSMutableDictionary dictionary];
 	NSString *launchdPath = [[NSUserDefaults standardUserDefaults] stringForKey:@"launchdItemLocation"];
-	NSString *logLocation = @"/Library/Logs/VineServer.log";
+	NSString *logLocation = @"/Library/Logs/HippoVNC.log";
 	NSString *oldPasswordFile = passwordFile;
 	NSData *vncauth = [[NSUserDefaults standardUserDefaults] dataForKey:@"vncauthSystemServer"];
 
-	NSString *launchdResources = @"/Library/Application Support/VineServer";
+	NSString *launchdResources = @"/Library/Application Support/HippoVNC";
 	
-	// If VineServer resources directory doesn't exist then create it
+	// If HippoVNC resources directory doesn't exist then create it
 	if (![[NSFileManager defaultManager] fileExistsAtPath:launchdResources]) {
 		success &= [myAuthorization executeCommand:@"/bin/mkdir" 
 										  withArgs:[NSArray arrayWithObjects:@"-p", launchdResources, nil]];
 		success &= [myAuthorization executeCommand:@"/usr/sbin/chown" 
 										  withArgs:[NSArray arrayWithObjects:@"-R", @"root:wheel", launchdResources, nil]];
 		if (!success) {
-			[startupItemStatusMessageField setStringValue:LocalizedString(@"Error: Unable to setup VineServer folder")];
+			[startupItemStatusMessageField setStringValue:LocalizedString(@"Error: Unable to setup HippoVNC folder")];
 			success = FALSE;
 		}
 	}	
 
 	if ([vncauth length]) {
-		passwordFile = [launchdResources stringByAppendingPathComponent: @".vinevncauth"];
-		[vncauth writeToFile:@"/tmp/.vinevncauth" atomically:YES];
+		passwordFile = [launchdResources stringByAppendingPathComponent: @".hippovncauth"];
+		[vncauth writeToFile:@"/tmp/.hippovncauth" atomically:YES];
 		if (![myAuthorization executeCommand:@"/bin/mv" 
-									withArgs:[NSArray arrayWithObjects:@"-f", @"/tmp/.vinevncauth", passwordFile, nil]]) {
+									withArgs:[NSArray arrayWithObjects:@"-f", @"/tmp/.hippovncauth", passwordFile, nil]]) {
 			[startupItemStatusMessageField setStringValue:LocalizedString(@"Error: Unable To Setup Password File")];
 			success = FALSE;
 		}
@@ -1754,7 +1754,7 @@ NSMutableArray *localIPAddresses() {
 										  withArgs:[NSArray arrayWithObjects:@"-R", @"755", launchdResources, nil]];		
 		
 		// Configure PLIST
-		[launchdDictionary setObject:@"VineServer" forKey:@"Label"];
+		[launchdDictionary setObject:@"HippoVNC" forKey:@"Label"];
 		[argv insertObject:[launchdResources stringByAppendingPathComponent:@"OSXvnc-server"] atIndex:0];
 		[launchdDictionary setObject:argv forKey:@"ProgramArguments"];
 
@@ -1799,7 +1799,7 @@ NSMutableArray *localIPAddresses() {
 		}
 
 		if (!success) {
-			[startupItemStatusMessageField setStringValue:LocalizedString(@"Error: Unable To Setup Vine Server using launchd")];
+			[startupItemStatusMessageField setStringValue:LocalizedString(@"Error: Unable To Setup HippoVNC using launchd")];
 		}
 	}
 	

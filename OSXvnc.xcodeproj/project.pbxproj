@@ -216,8 +216,8 @@
 		AB0CBFA50CCD1C7900C74547 /* TigerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TigerExtensions.h; sourceTree = "<group>"; };
 		AB0CBFA60CCD1C7900C74547 /* TigerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = TigerExtensions.m; sourceTree = "<group>"; };
 		AB15010D04F6A94500A80117 /* RFBBundleProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RFBBundleProtocol.h; sourceTree = "<group>"; };
-		AB25D83708686B520065843D /* VineServer-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "VineServer-Info.plist"; sourceTree = "<group>"; };
-		AB25D83808686B520065843D /* Vine Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Vine Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB25D83708686B520065843D /* HippoVNC-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HippoVNC-Info.plist"; sourceTree = "<group>"; };
+		AB25D83808686B520065843D /* HippoVNC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HippoVNC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB25D87D08686C7D0065843D /* JaguarBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JaguarBundle-Info.plist"; sourceTree = "<group>"; };
 		AB25D87E08686C7D0065843D /* JaguarBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JaguarBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB25D9B10868799D0065843D /* libstdc++.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstdc++.a"; path = "/usr/lib/gcc/darwin/3.3/libstdc++.a"; sourceTree = "<absolute>"; };
@@ -562,7 +562,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AB25D83808686B520065843D /* Vine Server.app */,
+				AB25D83808686B520065843D /* HippoVNC.app */,
 				AB25D87E08686C7D0065843D /* JaguarBundle.bundle */,
 				AB0CBF9C0CCD1C0500C74547 /* TigerBundle.bundle */,
 				AB82605708689AC00010AB63 /* storepasswd */,
@@ -592,7 +592,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				AB25D83708686B520065843D /* VineServer-Info.plist */,
+				AB25D83708686B520065843D /* HippoVNC-Info.plist */,
 				AB25D87D08686C7D0065843D /* JaguarBundle-Info.plist */,
 				AB0CBF9D0CCD1C0500C74547 /* TigerBundle-Info.plist */,
 			);
@@ -975,9 +975,9 @@
 			productReference = AB0CBF9C0CCD1C0500C74547 /* TigerBundle.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
-		AB25D81508686B520065843D /* Vine Server */ = {
+		AB25D81508686B520065843D /* HippoVNC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ABECD3EA08E46414009C84A0 /* Build configuration list for PBXNativeTarget "Vine Server" */;
+			buildConfigurationList = ABECD3EA08E46414009C84A0 /* Build configuration list for PBXNativeTarget "HippoVNC" */;
 			buildPhases = (
 				AB25D81808686B520065843D /* Headers */,
 				AB25D81D08686B520065843D /* Resources */,
@@ -997,10 +997,10 @@
 				AB25D81708686B520065843D /* PBXTargetDependency */,
 				AB0CC1F60CCD4C0C00C74547 /* PBXTargetDependency */,
 			);
-			name = "Vine Server";
+			name = HippoVNC;
 			productInstallPath = /OSXvnc/;
 			productName = OSXvnc;
-			productReference = AB25D83808686B520065843D /* Vine Server.app */;
+			productReference = AB25D83808686B520065843D /* HippoVNC.app */;
 			productType = "com.apple.product-type.application";
 		};
 		AB25D87108686C7D0065843D /* JaguarBundle */ = {
@@ -1110,7 +1110,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AB25D81508686B520065843D /* Vine Server */,
+				AB25D81508686B520065843D /* HippoVNC */,
 				AB25D87108686C7D0065843D /* JaguarBundle */,
 				AB0CBF9B0CCD1C0500C74547 /* TigerBundle */,
 				AB25D88E08686FC40065843D /* OSXvnc-server */,
@@ -1666,10 +1666,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "VineServer-Info.plist";
+				INFOPLIST_FILE = "HippoVNC-Info.plist";
 				INSTALL_MODE_FLAG = "a+rwX";
-				INSTALL_PATH = "/Vine Server/";
-				PRODUCT_NAME = "Vine Server";
+				INSTALL_PATH = /HippoVNC/;
+				PRODUCT_NAME = HippoVNC;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -1691,11 +1691,11 @@
 				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
-				INFOPLIST_FILE = "VineServer-Info.plist";
+				INFOPLIST_FILE = "HippoVNC-Info.plist";
 				INSTALL_MODE_FLAG = 755;
-				INSTALL_PATH = "/Vine Server/";
+				INSTALL_PATH = /HippoVNC/;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PRODUCT_NAME = "Vine Server";
+				PRODUCT_NAME = HippoVNC;
 				VERSIONING_SYSTEM = "apple-generic";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -1794,7 +1794,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
 		};
-		ABECD3EA08E46414009C84A0 /* Build configuration list for PBXNativeTarget "Vine Server" */ = {
+		ABECD3EA08E46414009C84A0 /* Build configuration list for PBXNativeTarget "HippoVNC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ABECD3EB08E46414009C84A0 /* Development */,
