@@ -1642,7 +1642,8 @@ NSMutableArray *localIPAddresses() {
 		// Coerce the CommandLine string with slight modifications
 		if (floor(NSAppKitVersionNumber) > floor(NSAppKitVersionNumber10_1)) {
 			NSMutableString *newDesktopName = [[oldDesktopName mutableCopy] autorelease];
-			[newDesktopName replaceOccurrencesOfString:@" " withString:@"_" options:nil range:NSMakeRange(0,[oldDesktopName length])];
+//			[newDesktopName replaceOccurrencesOfString:@" " withString:@"_" options:nil range:NSMakeRange(0,[oldDesktopName length])];
+			[newDesktopName replaceOccurrencesOfString:@" " withString:@"_" options:0 range:NSMakeRange(0,[oldDesktopName length])];
 			[systemServerDisplayNameField setStringValue:newDesktopName];
 		}
 		replaceString = [NSString stringWithFormat:@"VNCARGS=\"%@\"\n",[[self formCommandLineForSystemServer: YES] componentsJoinedByString:@" "]];

@@ -109,7 +109,7 @@ static EventLoopTimerRef screensaverTimer;
 Bool rfbDisableScreenSaver = FALSE;
 
 // Display ID
-CGDirectDisplayID displayID = NULL;
+CGDirectDisplayID displayID = 0;		// It's an int, so can't set to pointer value NULL
 
 extern void rfbScreensaverTimer(EventLoopTimerRef timer, void *userData);
 

@@ -72,11 +72,13 @@ void loadKeyTable() {
 
 void KbdAddEvent(Bool down, KeySym keySym, rfbClientPtr cl) {
 	rfbUndim();	
-	
+#if 0		// Changed to #if to avoid compile-time warning
 	if (0)  // Not sure why, but key events stop working in login view if alternateKeyboardHandler is used.
 	//if (alternateKeyboardHandler != NULL)
 		[(id)alternateKeyboardHandler handleKeyboard:(Bool) down forSym: (KeySym) keySym forClient: (rfbClientPtr) cl];
-	else {
+	else
+#endif
+	{
 		CGKeyCode keyCode = keyTable[(unsigned short)keySym];
 		CGCharCode keyChar = 0;
 		UInt32 modsForKey = keyTableMods[keySym];
@@ -140,7 +142,7 @@ void PtrAddEvent(int buttonMask, int x, int y, rfbClientPtr cl) {
 
     if (buttonMask & rfbWheelMask) {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        NSUserDefaults *currentUserDefs = [[NSUserDefaults alloc] initWithUser:NSUserName()];
+//        NSUserDefaults *currentUserDefs = [[NSUserDefaults alloc] initWithUser:NSUserName()];
 
         // I would rather cache this data than look it up each time but I don't know how to get notification of a change
         // A - User changes his setting in SysPrefs

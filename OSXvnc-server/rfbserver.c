@@ -1094,7 +1094,9 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 						if (appFound == YES) {
 							[[NSWorkspace sharedWorkspace] launchApplication:profile];
 						}
-							
+					
+						[profile release];
+						
 						CGEventPost(kCGHIDEventTap, keyEventDown);
 						//CGEventSetFlags(keyEventDown, 256);
 					}

@@ -203,7 +203,7 @@ static BOOL debugPB = NO;
 				}
 				// write the files
 				NSString *filename = [theWrapper preferredFilename];
-				BOOL setOfFiles = [filename isEqualToString:@"<Redstone set of files>"];
+				BOOL setOfFiles = [filename isEqualToString:@"<RoboHippo set of files>"];
 				if (setOfFiles) {
 					filename = [@"Files-" stringByAppendingString:[[NSProcessInfo processInfo] globallyUniqueString]];
 				}
@@ -961,8 +961,8 @@ void rfbReceiveRichClipboardRequest(rfbClientPtr cl) {
 							}
 						}
 						theWrapper = [[[NSFileWrapper alloc] initDirectoryWithFileWrappers:wrappers] autorelease];
-						[theWrapper setFilename:@"<Redstone set of files>"];
-						[theWrapper setPreferredFilename:@"<Redstone set of files>"];
+						[theWrapper setFilename:@"<RoboHippo set of files>"];
+						[theWrapper setPreferredFilename:@"<RoboHippo set of files>"];
 					}
 				}
 				if (!theWrapper) { // try for a URL next
