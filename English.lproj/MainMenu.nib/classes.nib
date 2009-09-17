@@ -103,8 +103,6 @@
 				<string>NSTextField</string>
 				<key>disableRemoteEventsCheckbox</key>
 				<string>NSButton</string>
-				<key>disableRichClipboardCheckbox</key>
-				<string>NSButton</string>
 				<key>disableStartupButton</key>
 				<string>NSButton</string>
 				<key>displayNameField</key>

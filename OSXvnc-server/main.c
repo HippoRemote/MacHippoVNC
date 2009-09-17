@@ -84,7 +84,7 @@ Bool rfbReverseMods = FALSE;
 
 Bool rfbSwapButtons = TRUE;
 Bool rfbDisableRemote = FALSE;
-Bool rfbDisableRichClipboards = FALSE;
+Bool rfbDisableRichClipboards = TRUE;
 Bool rfbRemapShortcuts = FALSE;
 BOOL rfbShouldSendUpdates = TRUE;
 BOOL registered = FALSE;

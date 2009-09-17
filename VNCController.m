@@ -189,7 +189,7 @@ NSMutableArray *localIPAddresses() {
         [NSNumber numberWithInt:2], @"eventSource",															 													  
 		
 		@"NO", @"disableRemoteEvents",
-		@"NO", @"disableRichClipboard",
+		@"YES", @"disableRichClipboard",
 		@"YES", @"allowRendezvous",
 		@"NO", @"dontDisconnectClients",
 
@@ -808,7 +808,6 @@ NSMutableArray *localIPAddresses() {
 	[eventSourcePopup selectItemAtIndex:[eventSourcePopup indexOfItemWithTag:[[NSUserDefaults standardUserDefaults] integerForKey:@"eventSource"]]];	
 	 
 	[disableRemoteEventsCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"disableRemoteEvents"]];
-	[disableRichClipboardCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"disableRichClipboard"]];
 	[allowRendezvousCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"allowRendezvous"]];
 	[openGLCheckbox setState:[[NSUserDefaults standardUserDefaults] boolForKey:@"useOpenGL"]];
 	
@@ -855,7 +854,7 @@ NSMutableArray *localIPAddresses() {
     [[NSUserDefaults standardUserDefaults] setInteger:[[sharingMatrix selectedCell] tag] forKey:@"sharingMode"];
     [[NSUserDefaults standardUserDefaults] setBool:[dontDisconnectCheckbox state] forKey:@"dontDisconnectClients"];
     [[NSUserDefaults standardUserDefaults] setBool:[disableRemoteEventsCheckbox state] forKey:@"disableRemoteEvents"];
-    [[NSUserDefaults standardUserDefaults] setBool:[disableRichClipboardCheckbox state] forKey:@"disableRichClipboard"];
+    [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:@"disableRichClipboard"];
 	
     [[NSUserDefaults standardUserDefaults] setBool:[limitToLocalConnections state] forKey:@"localhostOnly"];
     [[NSUserDefaults standardUserDefaults] setBool:[allowRendezvousCheckbox state] forKey:@"allowRendezvous"];
@@ -1199,8 +1198,8 @@ NSMutableArray *localIPAddresses() {
         [argv addObject:@"-swapButtons"];
     if ([disableRemoteEventsCheckbox state])
         [argv addObject:@"-disableRemoteEvents"];
-    if ([disableRichClipboardCheckbox state])
-        [argv addObject:@"-disableRichClipboards"];
+	// Always disable rich clipboard
+    [argv addObject:@"-disableRichClipboards"];
 	if ([openGLCheckbox state])
 		[argv addObject:@"-useOpenGL"];
 	

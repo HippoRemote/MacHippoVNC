@@ -84,7 +84,6 @@
     IBOutlet NSMatrix *sharingMatrix;
     IBOutlet NSButton *dontDisconnectCheckbox;
     IBOutlet NSButton *disableRemoteEventsCheckbox;
-    IBOutlet NSButton *disableRichClipboardCheckbox;
     IBOutlet NSButton *allowRendezvousCheckbox;
 
 	// Startup
