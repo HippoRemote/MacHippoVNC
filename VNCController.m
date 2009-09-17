@@ -373,14 +373,16 @@ NSMutableArray *localIPAddresses() {
 			
 			[displayIPAddresses addObject: ipString];
 		}
+		[commonIPAddresses release];
 		
 		if (!anyConnections) 
 			[self performSelectorOnMainThread:@selector(addStatusMessage:) withObject: @"\n(It appears that your firewall is not permitting VNC connections)" waitUntilDone:NO];
 
 		[self performSelectorOnMainThread:@selector(updateHostNames:) withObject: commonHostNames waitUntilDone:NO];
 		[self performSelectorOnMainThread:@selector(updateIPAddresses:) withObject: displayIPAddresses waitUntilDone:NO];
-		
+
 		waitingForHostInfo = FALSE;
+		[commonHostNames release];
 	}
 	NS_HANDLER
 		NSLog(@"Exception in updateHostInfo: %@", localException);
