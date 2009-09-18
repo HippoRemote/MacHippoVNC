@@ -41,8 +41,7 @@ unsigned char keyTableMods[keyTableSize]; // 8 Bits for Modifier Keys
 
 // This flag will try to change the modifier key state to the required set for the unicode key that came in
 
-// It will be turned on by JaguarExtensions unless specified
-BOOL pressModsForKeys = FALSE;
+BOOL pressModsForKeys = TRUE;
 
 void *alternateKeyboardHandler = nil;
 
@@ -60,14 +59,30 @@ void loadKeyTable() {
     // This is the old US only keyboard mapping
     // Map the above key table into a static array so we can just look them up directly
     // NSLog(@"Unable To Determine Key Map - Reverting to US Mapping\n");
-    for (i = 0; i < (sizeof(USKeyCodes) / sizeof(int)); i += 2)
+    for (i = 0; i < (sizeof(USKeyCodes) / sizeof(int)); i += 2) {
         keyTable[(unsigned short)USKeyCodes[i]] = (CGKeyCode) USKeyCodes[i+1];
+//		NSLog(@"%d: keyTable[%d] = %d", i, (unsigned short)USKeyCodes[i], keyTable[(unsigned short)USKeyCodes[i]]);
+	}
 
     // This is the old SpecialKeyCodes keyboard mapping
     // Map the above key table into a static array so we can just look them up directly
     // NSLog(@"Loading %d XKeysym Special Keys\n", (sizeof(SpecialKeyCodes) / sizeof(int)));
     for (i = 0; i < (sizeof(SpecialKeyCodes) / sizeof(int)); i += 2)
         keyTable[(unsigned short)SpecialKeyCodes[i]] = (CGKeyCode) SpecialKeyCodes[i+1];
+	
+	// Now update modifier table for the shift key
+	// Set Shift key for A-Z
+	for (i=0; i<52; i += 2)
+		keyTableMods[(unsigned short)USKeyCodes[i]] = 0x2;
+	
+	// For ! to )
+	for (i=72+52; i<(72+52+20); i += 2)
+		keyTableMods[(unsigned short)USKeyCodes[i]] = 0x2;
+
+	// For _ to |
+	for (i=92+2+52; i<=92+2+52+(20*2); i += 4)
+		keyTableMods[(unsigned short)USKeyCodes[i]] = 0x2;
+	
 }
 
 void KbdAddEvent(Bool down, KeySym keySym, rfbClientPtr cl) {
@@ -83,6 +98,8 @@ void KbdAddEvent(Bool down, KeySym keySym, rfbClientPtr cl) {
 		CGCharCode keyChar = 0;
 		UInt32 modsForKey = keyTableMods[keySym];
 		bool doMods = (modsForKey != 0xFF && down && pressModsForKeys);
+//		NSLog(@"kbdAddEvent: keySym=%ld (0x%x), keyCode=%ld, modsForKey=%d, doMods=%d", 
+//			  keySym, keySym, keyCode, modsForKey, doMods);
 
 		if (keySym < 0xFF) // If it's an ASCII key we'll send the keyChar
 			keyChar = (CGCharCode) keySym;
@@ -102,12 +119,12 @@ void KbdAddEvent(Bool down, KeySym keySym, rfbClientPtr cl) {
 					CGPostKeyboardEvent(0, keyTable[XK_Control_L], (modsForKey & controlKey));
             
 				if (!(cl->modiferKeys[keyTable[XK_Shift_L]]) != !(modsForKey & shiftKey))
-					CGPostKeyboardEvent(0, keyTable[XK_Shift_L], (modsForKey & shiftKey));
+					CGPostKeyboardEvent(0, keyTable[XK_Shift_L], true);
 			}
         
 			CGPostKeyboardEvent(keyChar, keyCode, down);
 			
-			if (doMods) {
+			if (doMods) {				
 				// Return keys to previous state
 				if (!(cl->modiferKeys[keyTable[XK_Meta_L]]) != !(modsForKey & optionKey))
 					CGPostKeyboardEvent(0, keyTable[XK_Meta_L], cl->modiferKeys[keyTable[XK_Meta_L]]);
