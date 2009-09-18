@@ -326,7 +326,6 @@ typedef struct rfbClientRec {
 	unsigned char profileLen;
 	
 	BOOL isLoggedIn;
-	unsigned long modifierFlags;
 } rfbClientRec, *rfbClientPtr;
 
 

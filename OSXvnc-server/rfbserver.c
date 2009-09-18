@@ -1017,116 +1017,67 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					keyCode = keyCodeForKeyboard(keyboardLayout, keyCode);
 				}
 				
-				CGEventRef keyEventDown = NULL;
-				if (msg.ke.down & 0x01) {
-					// Set modifier flags.
-					if (keyCode == 0x0037) cl->modifierFlags |= kCGEventFlagMaskCommand;
-					if (keyCode == 0x0038) cl->modifierFlags |= kCGEventFlagMaskShift;
-					if (keyCode == 0x0039) cl->modifierFlags |= kCGEventFlagMaskAlphaShift;
-					if (keyCode == 0x003a) cl->modifierFlags |= kCGEventFlagMaskAlternate;
-					if (keyCode == 0x003b) cl->modifierFlags |= kCGEventFlagMaskControl;
-					if (keyCode == 0x003f) cl->modifierFlags |= kCGEventFlagMaskSecondaryFn;
-					//cl->modifierFlags &= ~kCGEventFlagMaskNumericPad;
-					//cl->modifierFlags &= ~kCGEventFlagMaskSecondaryFn;
+				// New method:
+				// 1. If option enabled, launch app if needed
+				// 2. Send key
+				if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
+					// Get active application.
 					
-					if ((keyCode != 0x0037) && (keyCode != 0x0038) && (keyCode != 0x0039) && (keyCode != 0x003a) && (keyCode != 0x003b) && (keyCode != 0x003f)) {
-						NSUInteger flags = CGEventGetFlags(keyEventDown);
-						NSLog(@"down modifier flags: %d %d", flags, cl->modifierFlags);
-						flags |= cl->modifierFlags;
-						keyEventDown = CGEventCreateKeyboardEvent(NULL, keyCode, true);
-						CGEventSetFlags(keyEventDown, flags);
-					}
-				}
-				else {
-					// Release modifier flags.
-					//cl->modifierFlags &= ~kCGEventFlagMaskNumericPad;
-					//cl->modifierFlags &= ~kCGEventFlagMaskSecondaryFn;
-					if (keyCode == 0x0037) cl->modifierFlags &= ~kCGEventFlagMaskCommand;
-					if (keyCode == 0x0038) cl->modifierFlags &= ~kCGEventFlagMaskShift;
-					if (keyCode == 0x0039) cl->modifierFlags &= ~kCGEventFlagMaskAlphaShift;
-					if (keyCode == 0x003a) cl->modifierFlags &= ~kCGEventFlagMaskAlternate;
-					if (keyCode == 0x003b) cl->modifierFlags &= ~kCGEventFlagMaskControl;
-					if (keyCode == 0x003f) cl->modifierFlags &= ~kCGEventFlagMaskSecondaryFn;
+					NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
+					NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
+					BOOL      switchProfile = (msg.ke.down >= 128);
 					
-					if ((keyCode != 0x0037) && (keyCode != 0x0038) && (keyCode != 0x0039) && (keyCode != 0x003a) && (keyCode != 0x003b) && (keyCode != 0x003f)) {
-						NSUInteger flags = CGEventGetFlags(keyEventDown);
-						NSLog(@"up modifier flags: %d %d", flags, cl->modifierFlags);
-						flags &= ~cl->modifierFlags;
-						keyEventDown = CGEventCreateKeyboardEvent(NULL, keyCode, false);
-						CGEventSetFlags(keyEventDown, flags);
+					if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
+						NSLog(@"already active app: keyCode=%x", keyCode);
 					}
-				}
-				
-				if (keyEventDown != NULL) {
-					if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
-						// Get active application.
+					else {
+						BOOL appFound = NO;
 						
-						NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
-						NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
-						BOOL      switchProfile = (msg.ke.down >= 128);
-
-						if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
-							CGEventPost(kCGHIDEventTap, keyEventDown);
-							//NSLog(@"already active app: keyCode=%x", keyCode);
-							//CGEventSetFlags(keyEventDown, 256);
-						}
-						else {
-							BOOL appFound = NO;
-							
-							NSArray *launchedAppsArray = [[NSWorkspace sharedWorkspace] launchedApplications];
-							if (launchedAppsArray) {
-								NSEnumerator *launchedAppsEnumerator = [launchedAppsArray objectEnumerator];
-								NSDictionary *launchedAppDictionary;
-								while ((launchedAppDictionary = [launchedAppsEnumerator nextObject])) {
-									NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
-									if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
-										appFound = YES;
-										break;
-										
-										/*
-										NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
-										NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
-										NSLog(@"serial number low=%ul, high=%ul", 
-											[processSerialNumberLow unsignedLongValue],
-											  [processSerialNumberHigh unsignedLongValue]);
-										if( processSerialNumberLow && processSerialNumberHigh )
-										{
-											NSLog(@"found process serial number: keyCode=%x", keyCode);
-											appFound = YES;
-											ProcessSerialNumber processSerialNumber;
-											processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
-											processSerialNumber.lowLongOfPSN = [processSerialNumberLow unsignedLongValue];
-											
-											CGEventPostToPSN( &processSerialNumber, keyEventDown );
-										}
-										 */
-									}
+						NSArray *launchedAppsArray = [[NSWorkspace sharedWorkspace] launchedApplications];
+						if (launchedAppsArray) {
+							NSEnumerator *launchedAppsEnumerator = [launchedAppsArray objectEnumerator];
+							NSDictionary *launchedAppDictionary;
+							while ((launchedAppDictionary = [launchedAppsEnumerator nextObject])) {
+								NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
+								if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
+									appFound = YES;
+									break;
+									
+									/*
+									 NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
+									 NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
+									 NSLog(@"serial number low=%ul, high=%ul", 
+									 [processSerialNumberLow unsignedLongValue],
+									 [processSerialNumberHigh unsignedLongValue]);
+									 if( processSerialNumberLow && processSerialNumberHigh )
+									 {
+									 NSLog(@"found process serial number: keyCode=%x", keyCode);
+									 appFound = YES;
+									 ProcessSerialNumber processSerialNumber;
+									 processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
+									 processSerialNumber.lowLongOfPSN = [processSerialNumberLow unsignedLongValue];
+									 
+									 CGEventPostToPSN( &processSerialNumber, keyEventDown );
+									 }
+									 */
 								}
 							}
-							else
-							{
-								NSLog(@"not in launchedAppsArray");
-							}
-							
-							if (appFound == YES) {
-								[[NSWorkspace sharedWorkspace] launchApplication:profile];
-								[NSThread sleepForTimeInterval:0.5];
-							}
-
-							CGEventPost(kCGHIDEventTap, keyEventDown);
-							//CGEventSetFlags(keyEventDown, 256);
 						}
-						[profile release];
+						else
+						{
+							NSLog(@"not in launchedAppsArray");
+						}
 						
-						CFRelease(keyEventDown);
+						if (appFound == YES) {
+							[[NSWorkspace sharedWorkspace] launchApplication:profile];
+//							[NSThread sleepForTimeInterval:0.1];
+						}
+						
 					}
-					else
-					{
-						CGEventPost(kCGHIDEventTap, keyEventDown);
-						CFRelease(keyEventDown);
-					}
-
+					[profile release];
+					
 				}
+				CGPostKeyboardEvent(0, keyCode, (msg.ke.down & 0x01)==1);
 				
 				[pool release];
 			}
