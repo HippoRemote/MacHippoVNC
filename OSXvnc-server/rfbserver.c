@@ -981,6 +981,8 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
             }
 			
 			if (!cl->disableRemoteEvents) {
+				NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
 				TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();
 				CFDataRef uchr = (CFDataRef)TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
 				const UCKeyboardLayout *keyboardLayout = (const UCKeyboardLayout*)CFDataGetBytePtr(uchr);
@@ -1017,42 +1019,47 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 				
 				CGEventRef keyEventDown = NULL;
 				if (msg.ke.down & 0x01) {
-					keyEventDown = CGEventCreateKeyboardEvent(NULL, keyCode, true);
-					
 					// Set modifier flags.
-					NSUInteger flags = CGEventGetFlags(keyEventDown);
-					//NSLog(@"modifier flags: %d", flags);
-					if (keyCode == 0x0037) flags |= kCGEventFlagMaskCommand;
-					if (keyCode == 0x0038) flags |= kCGEventFlagMaskShift;
-					if (keyCode == 0x0039) flags |= kCGEventFlagMaskAlphaShift;
-					if (keyCode == 0x003a) flags |= kCGEventFlagMaskAlternate;
-					if (keyCode == 0x003b) flags |= kCGEventFlagMaskControl;
-					if (keyCode == 0x003f) flags |= kCGEventFlagMaskSecondaryFn;
+					if (keyCode == 0x0037) cl->modifierFlags |= kCGEventFlagMaskCommand;
+					if (keyCode == 0x0038) cl->modifierFlags |= kCGEventFlagMaskShift;
+					if (keyCode == 0x0039) cl->modifierFlags |= kCGEventFlagMaskAlphaShift;
+					if (keyCode == 0x003a) cl->modifierFlags |= kCGEventFlagMaskAlternate;
+					if (keyCode == 0x003b) cl->modifierFlags |= kCGEventFlagMaskControl;
+					if (keyCode == 0x003f) cl->modifierFlags |= kCGEventFlagMaskSecondaryFn;
+					//cl->modifierFlags &= ~kCGEventFlagMaskNumericPad;
+					//cl->modifierFlags &= ~kCGEventFlagMaskSecondaryFn;
 					
-					flags &= ~kCGEventFlagMaskNumericPad;
-					flags &= ~kCGEventFlagMaskSecondaryFn;
-					CGEventSetFlags(keyEventDown, flags);
+					if ((keyCode != 0x0037) && (keyCode != 0x0038) && (keyCode != 0x0039) && (keyCode != 0x003a) && (keyCode != 0x003b) && (keyCode != 0x003f)) {
+						NSUInteger flags = CGEventGetFlags(keyEventDown);
+						NSLog(@"down modifier flags: %d %d", flags, cl->modifierFlags);
+						flags |= cl->modifierFlags;
+						keyEventDown = CGEventCreateKeyboardEvent(NULL, keyCode, true);
+						CGEventSetFlags(keyEventDown, flags);
+					}
 				}
 				else {
-					keyEventDown = CGEventCreateKeyboardEvent(NULL, keyCode, false);
-					
 					// Release modifier flags.
-					NSUInteger flags = CGEventGetFlags(keyEventDown);
-					flags &= ~kCGEventFlagMaskNumericPad;
-					flags &= ~kCGEventFlagMaskSecondaryFn;
-					if (keyCode == 0x0037) flags &= ~kCGEventFlagMaskCommand;
-					if (keyCode == 0x0038) flags &= ~kCGEventFlagMaskShift;
-					if (keyCode == 0x0039) flags &= ~kCGEventFlagMaskAlphaShift;
-					if (keyCode == 0x003a) flags &= ~kCGEventFlagMaskAlternate;
-					if (keyCode == 0x003b) flags &= ~kCGEventFlagMaskControl;
-					if (keyCode == 0x003f) flags &= ~kCGEventFlagMaskSecondaryFn;
-					CGEventSetFlags(keyEventDown, flags);
+					//cl->modifierFlags &= ~kCGEventFlagMaskNumericPad;
+					//cl->modifierFlags &= ~kCGEventFlagMaskSecondaryFn;
+					if (keyCode == 0x0037) cl->modifierFlags &= ~kCGEventFlagMaskCommand;
+					if (keyCode == 0x0038) cl->modifierFlags &= ~kCGEventFlagMaskShift;
+					if (keyCode == 0x0039) cl->modifierFlags &= ~kCGEventFlagMaskAlphaShift;
+					if (keyCode == 0x003a) cl->modifierFlags &= ~kCGEventFlagMaskAlternate;
+					if (keyCode == 0x003b) cl->modifierFlags &= ~kCGEventFlagMaskControl;
+					if (keyCode == 0x003f) cl->modifierFlags &= ~kCGEventFlagMaskSecondaryFn;
+					
+					if ((keyCode != 0x0037) && (keyCode != 0x0038) && (keyCode != 0x0039) && (keyCode != 0x003a) && (keyCode != 0x003b) && (keyCode != 0x003f)) {
+						NSUInteger flags = CGEventGetFlags(keyEventDown);
+						NSLog(@"up modifier flags: %d %d", flags, cl->modifierFlags);
+						flags &= ~cl->modifierFlags;
+						keyEventDown = CGEventCreateKeyboardEvent(NULL, keyCode, false);
+						CGEventSetFlags(keyEventDown, flags);
+					}
 				}
 				
 				if (keyEventDown != NULL) {
 					if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
 						// Get active application.
-						NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 						
 						NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
 						NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
@@ -1060,6 +1067,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 
 						if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
 							CGEventPost(kCGHIDEventTap, keyEventDown);
+							//NSLog(@"already active app: keyCode=%x", keyCode);
 							//CGEventSetFlags(keyEventDown, 256);
 						}
 						else {
@@ -1074,12 +1082,16 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 									if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 										appFound = YES;
 										break;
-
+										
 										/*
 										NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
 										NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
+										NSLog(@"serial number low=%ul, high=%ul", 
+											[processSerialNumberLow unsignedLongValue],
+											  [processSerialNumberHigh unsignedLongValue]);
 										if( processSerialNumberLow && processSerialNumberHigh )
 										{
+											NSLog(@"found process serial number: keyCode=%x", keyCode);
 											appFound = YES;
 											ProcessSerialNumber processSerialNumber;
 											processSerialNumber.highLongOfPSN = [processSerialNumberHigh unsignedLongValue];
@@ -1087,23 +1099,26 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 											
 											CGEventPostToPSN( &processSerialNumber, keyEventDown );
 										}
-										*/
+										 */
 									}
 								}
+							}
+							else
+							{
+								NSLog(@"not in launchedAppsArray");
 							}
 							
 							if (appFound == YES) {
 								[[NSWorkspace sharedWorkspace] launchApplication:profile];
+								[NSThread sleepForTimeInterval:0.5];
 							}
-						
-							
+
 							CGEventPost(kCGHIDEventTap, keyEventDown);
 							//CGEventSetFlags(keyEventDown, 256);
 						}
 						[profile release];
 						
 						CFRelease(keyEventDown);
-						[pool release];
 					}
 					else
 					{
@@ -1112,6 +1127,8 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					}
 
 				}
+				
+				[pool release];
 			}
 			
 			return;
@@ -1168,9 +1185,8 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 									NSString *applicationName = [launchedAppDictionary objectForKey:@"NSApplicationName"];
 									if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 										appFound = YES;
-										break;
+										[[NSWorkspace sharedWorkspace] launchApplication:profile];
 										
-										/*
 										 NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
 										 NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
 										 if( processSerialNumberLow && processSerialNumberHigh )
@@ -1182,17 +1198,20 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 										 
 										 CGEventPostToPSN( &processSerialNumber, keyEventDown );
 										 }
-										 */
+										break;
+
 									}
 								}
 							}
 							
+							/*
 							if (appFound == YES) {
 								[[NSWorkspace sharedWorkspace] launchApplication:profile];
-								[NSThread sleepForTimeInterval:0.1];
+//								[NSThread sleepForTimeInterval:0.5];
 							}
-							
-							CGEventPost(kCGHIDEventTap, keyEventDown);
+							 */
+							if (appFound == NO)
+								CGEventPost(kCGHIDEventTap, keyEventDown);
 						}
 						
 						CFRelease(keyEventDown);
