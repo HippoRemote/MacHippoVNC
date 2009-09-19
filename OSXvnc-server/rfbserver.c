@@ -1115,6 +1115,8 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					//NSUInteger flags = CGEventGetFlags(keyEventDown);
 					//NSLog(@"modifier flags: %d", flags);
 					
+					// 1. If option enabled, launch app if needed
+					// 2. Send key
 					if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
 						// Get active application.
 							
@@ -1123,7 +1125,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 						BOOL      switchProfile = (msg.ke.down >= 128);
 							
 						if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
-							CGEventPost(kCGHIDEventTap, keyEventDown);
+						//	CGEventPost(kCGHIDEventTap, keyEventDown);
 						}
 						else {
 							BOOL appFound = NO;
@@ -1157,16 +1159,11 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 								}
 							}
 							
-							CGEventPost(kCGHIDEventTap, keyEventDown);
 						}
-						
-						CFRelease(keyEventDown);
 					}
-					else
-					{
-						CGEventPost(kCGHIDEventTap, keyEventDown);
-						CFRelease(keyEventDown);
-					}
+					
+					CGEventPost(kCGHIDEventTap, keyEventDown);
+					CFRelease(keyEventDown);
 				}
 				[pool release];
 			}
