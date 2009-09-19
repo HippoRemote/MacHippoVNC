@@ -1028,7 +1028,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					BOOL      switchProfile = (msg.ke.down >= 128);
 					
 					if ((switchProfile == NO) || ([profile compare:activeApp options:NSCaseInsensitiveSearch] == NSOrderedSame)) {
-						NSLog(@"already active app: keyCode=%x", keyCode);
+					//	NSLog(@"already active app: keyCode=%x", keyCode);
 					}
 					else {
 						BOOL appFound = NO;
@@ -1099,6 +1099,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
             }
 			
 			if (!cl->disableRemoteEvents) {
+				NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 				CGEventRef keyEventDown = NULL;
 				
 				if (msg.ke.down & 0x01)
@@ -1116,7 +1117,6 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					
 					if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
 						// Get active application.
-						NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 							
 						NSString *profile       = [[NSString alloc] initWithBytes:cl->profile length:cl->profileLen encoding:NSUTF16BigEndianStringEncoding];
 						NSString *activeApp     = [[[NSWorkspace sharedWorkspace] activeApplication] objectForKey:@"NSApplicationName"];
@@ -1137,7 +1137,8 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 									if ([applicationName compare:profile options:NSCaseInsensitiveSearch] == NSOrderedSame) {
 										appFound = YES;
 										[[NSWorkspace sharedWorkspace] launchApplication:profile];
-										
+
+										/*
 										 NSNumber *processSerialNumberLow  = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberLow"];
 										 NSNumber *processSerialNumberHigh = [launchedAppDictionary objectForKey:@"NSApplicationProcessSerialNumberHigh"];
 										 if( processSerialNumberLow && processSerialNumberHigh )
@@ -1149,24 +1150,17 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 										 
 										 CGEventPostToPSN( &processSerialNumber, keyEventDown );
 										 }
+										 */
 										break;
 
 									}
 								}
 							}
 							
-							/*
-							if (appFound == YES) {
-								[[NSWorkspace sharedWorkspace] launchApplication:profile];
-//								[NSThread sleepForTimeInterval:0.5];
-							}
-							 */
-							if (appFound == NO)
-								CGEventPost(kCGHIDEventTap, keyEventDown);
+							CGEventPost(kCGHIDEventTap, keyEventDown);
 						}
 						
 						CFRelease(keyEventDown);
-						[pool release];
 					}
 					else
 					{
@@ -1174,6 +1168,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 						CFRelease(keyEventDown);
 					}
 				}
+				[pool release];
 			}
 			
 			return;
