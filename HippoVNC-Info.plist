@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>1.0 - Copyright© 2009 RoboHippo LLC </string>
 	<key>CFBundleIconFile</key>
-	<string>VineServer.icns</string>
+	<string>HippoVNC.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.robohippo.hippovnc</string>
 	<key>CFBundleInfoDictionaryVersion</key>

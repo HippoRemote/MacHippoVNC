@@ -12,6 +12,7 @@
 		502C5673104FE4760010215C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABEE28F804C8745B00A80117 /* Security.framework */; };
 		9199995B0B1135FF0099EA7A /* getMACAddress.c in Sources */ = {isa = PBXBuildFile; fileRef = 919999430B11348E0099EA7A /* getMACAddress.c */; };
 		99B5256F1061737F0090EDB4 /* HippoVNC Release Notes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 99B5256D1061737F0090EDB4 /* HippoVNC Release Notes.rtf */; };
+		99F1B9951067CC87006C4226 /* HippoVNC.icns in Resources */ = {isa = PBXBuildFile; fileRef = 99F1B9941067CC87006C4226 /* HippoVNC.icns */; };
 		AB056F7B0CDF7C0D00C0AAB0 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABEE28F804C8745B00A80117 /* Security.framework */; };
 		AB0CBFA70CCD1C8000C74547 /* TigerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AB0CBFA60CCD1C7900C74547 /* TigerExtensions.m */; };
 		AB0CC1720CCD44CD00C74547 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -125,7 +126,6 @@
 		ABD29D3F0D80B569005BFA6B /* VNCBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = ABD29D3D0D80B569005BFA6B /* VNCBundle.h */; };
 		ABD29D400D80B569005BFA6B /* VNCBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD29D3E0D80B569005BFA6B /* VNCBundle.m */; };
 		ABD29D410D80B569005BFA6B /* VNCBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD29D3E0D80B569005BFA6B /* VNCBundle.m */; };
-		ABFC222C0AF08CBA00BCE727 /* VineServer.icns in Resources */ = {isa = PBXBuildFile; fileRef = ABFC222B0AF08CBA00BCE727 /* VineServer.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,6 +212,7 @@
 		919999420B11348C0099EA7A /* getMACAddress.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = getMACAddress.h; sourceTree = "<group>"; };
 		919999430B11348E0099EA7A /* getMACAddress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; path = getMACAddress.c; sourceTree = "<group>"; };
 		99B5256E1061737F0090EDB4 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = "English.lproj/HippoVNC Release Notes.rtf"; sourceTree = "<group>"; };
+		99F1B9941067CC87006C4226 /* HippoVNC.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = HippoVNC.icns; sourceTree = "<group>"; };
 		AB0CBF9C0CCD1C0500C74547 /* TigerBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TigerBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB0CBF9D0CCD1C0500C74547 /* TigerBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TigerBundle-Info.plist"; sourceTree = "<group>"; };
 		AB0CBFA50CCD1C7900C74547 /* TigerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TigerExtensions.h; sourceTree = "<group>"; };
@@ -254,7 +255,6 @@
 		ABE1EFD50AC9F4B900143E2B /* German */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = German; path = German.lproj/Copying.rtf; sourceTree = "<group>"; };
 		ABEE28F804C8745B00A80117 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		ABF191B704E447A400A80117 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
-		ABFC222B0AF08CBA00BCE727 /* VineServer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = VineServer.icns; sourceTree = "<group>"; };
 		F538E00C02F9812901A80186 /* .cvsignore */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = .cvsignore; sourceTree = "<group>"; };
 		F538E01002F9812901A80186 /* auth.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; path = auth.c; sourceTree = "<group>"; };
 		F538E01302F9812901A80186 /* corre.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = corre.c; sourceTree = "<group>"; };
@@ -610,6 +610,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				99F1B9941067CC87006C4226 /* HippoVNC.icns */,
 				99B5256D1061737F0090EDB4 /* HippoVNC Release Notes.rtf */,
 				AB3E27F70AF947FB004AF567 /* Vine Server.pdf */,
 				096B69DC0097995A7F000001 /* OSXvnc.html */,
@@ -618,7 +619,6 @@
 				AB541C3B07A0273500B63668 /* Copying.rtf */,
 				F57BB467027E036F014B5D3F /* Credits.rtf */,
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
-				ABFC222B0AF08CBA00BCE727 /* VineServer.icns */,
 				F5F3A78903B395AA01A80117 /* OSXvnc.jpg */,
 				F570ED1002F9DA7601A80186 /* OSXvnc.icns */,
 				F54B48D8038C32FA01A80117 /* OSXvnc.tiff */,
@@ -1140,9 +1140,9 @@
 				AB25DA5108688E100065843D /* JaguarBundle.bundle in Resources */,
 				AB0CC2020CCD4C4300C74547 /* TigerBundle.bundle in Resources */,
 				AB25D82608686B520065843D /* OSXvnc in Resources */,
-				ABFC222C0AF08CBA00BCE727 /* VineServer.icns in Resources */,
 				AB3E27F80AF947FB004AF567 /* Vine Server.pdf in Resources */,
 				99B5256F1061737F0090EDB4 /* HippoVNC Release Notes.rtf in Resources */,
+				99F1B9951067CC87006C4226 /* HippoVNC.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

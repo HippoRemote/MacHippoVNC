@@ -57,7 +57,7 @@ struct rfbClientIterator {
 static pthread_mutex_t rfbClientListMutex;
 static struct rfbClientIterator rfbClientIteratorInstance;
 
-//static float systemVolume = 0.0;
+static float systemVolume = 0.0;
 
 void
 rfbClientListInit(void)
@@ -112,7 +112,8 @@ void rfbSendClientList() {
 	[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"VNCConnections" 
 																   object:[NSString stringWithFormat:@"OSXvnc%d",rfbPort] 
 																 userInfo:[NSDictionary dictionaryWithObject:clientList forKey:@"clientList"]];
-	
+
+	[clientList release];
 	[pool release];
 
     pthread_mutex_unlock(&rfbClientListMutex);
@@ -388,11 +389,12 @@ rfbClientPtr rfbNewClient(int sock) {
 		
 		cl->isLoggedIn = CFBooleanGetValue(loginCompleted);
 		NSLog(@"isLoggedIn: %d", cl->isLoggedIn);
+		CFRelease(sessionInfoDict);
     }
 	else {
 		cl->isLoggedIn = NO;
 	}
-	
+
 	
     
     sprintf(pv,rfbProtocolVersionFormat,rfbProtocolMajorVersion, rfbProtocolMinorVersion);
@@ -990,25 +992,76 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 				CGKeyCode keyCode = Swap32IfLE(msg.ke.key);
 				
 				if ((keyCode >= 0xe000) && (keyCode <= 0xf8ff)) {
-					/*
-					if (keyCode == 0xe04a) {
-						if (systemVolume == 0.0) {
-							systemVolume = [ANSystemSoundWrapper systemVolume];
-							[ANSystemSoundWrapper setSystemVolume:0.0];
-						}
-						else {
-							[ANSystemSoundWrapper setSystemVolume:systemVolume];
-							systemVolume = 0.0;
-						}
-					}
-					*/
 					
+					// mute
+					if (keyCode == 0xe04a) {
+						if ((msg.ke.down & 0x01)==1) {
+							if (systemVolume == 0.0) {
+								systemVolume = [ANSystemSoundWrapper systemVolume];
+								[ANSystemSoundWrapper setSystemVolume:0.0];
+							}
+							else {
+								[ANSystemSoundWrapper setSystemVolume:systemVolume];
+								systemVolume = 0.0;
+							}
+						}
+						[pool drain];
+						return;
+					}
+					// volume up
+					if (keyCode == 0xe048) {
+						if ((msg.ke.down & 0x01) == 1)
+						{
+							NSAppleScript *script = [[NSAppleScript alloc] initWithSource:
+													 @"set currentVolume to output volume of (get volume settings)\n" \
+													 @"set scaledVolume to round (currentVolume / (100 / 16))\n" \
+													 @"set scaledVolume to scaledVolume + 1\n" \
+													 @"if (scaledVolume > 16) then\n" \
+														@"\tset scaledVolume to 16\n" \
+													 @"end if\n" \
+													 @"set newVolume to round (scaledVolume / 16 * 100)\n" \
+													 @"set volume output volume newVolume\n"];
+							NSDictionary  *errors;
+							NSAppleEventDescriptor *result = NULL;
+							result = [script executeAndReturnError:&errors];
+							[script release];
+						}
+						[pool drain];
+						return;
+					}
+					// volume down
+					else if (keyCode == 0xe049) {
+						if ((msg.ke.down & 0x01) == 1)
+						{
+							NSAppleScript *script = [[NSAppleScript alloc] initWithSource:
+													@"set currentVolume to output volume of (get volume settings)\n" \
+													@"set scaledVolume to round (currentVolume / (100 / 16))\n" \
+													@"set scaledVolume to scaledVolume - 1\n" \
+													@"if (scaledVolume < 0) then\n" \
+														@"\tset scaledVolume to 0\n" \
+													@"end if\n" \
+													@"set newVolume to round (scaledVolume / 16 * 100)\n" \
+													 @"set volume output volume newVolume\n"];
+							
+							
+							NSDictionary  *errors;
+							NSAppleEventDescriptor *result = NULL;
+							result = [script executeAndReturnError:&errors];
+							[script release];
+						}
+						[pool drain];
+						return;
+					}
+					
+					// sleep
 					if (keyCode == 0xf8ff) {
 						NSAppleScript *script = [[NSAppleScript alloc] initWithSource:@"tell application \"Finder\" to sleep"];
 						NSDictionary  *errors;
 						NSAppleEventDescriptor *result = NULL;
 						result = [script executeAndReturnError:&errors];
 						[script release];
+						[pool drain];
+						return;
 					}
 					
 					keyCode = keyCode & 0x0ff;
@@ -1079,7 +1132,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 				}
 				CGPostKeyboardEvent(0, keyCode, (msg.ke.down & 0x01)==1);
 				
-				[pool release];
+				[pool drain];
 			}
 			
 			return;
