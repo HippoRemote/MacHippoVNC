@@ -60,8 +60,6 @@
 				<string>id</string>
 				<key>openLog</key>
 				<string>id</string>
-				<key>openReleaseNotes</key>
-				<string>id</string>
 				<key>optionChanged</key>
 				<string>id</string>
 				<key>removeService</key>

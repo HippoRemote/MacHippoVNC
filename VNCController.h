@@ -21,7 +21,6 @@
 	IBOutlet NSWindow *reverseConnectionWindow;
 
 	// System Server UI
-	IBOutlet NSMenuItem *systemServerMenu;
 	IBOutlet NSWindow *systemServerWindow;
 	
 	IBOutlet NSTextField *systemServerDisplayNameField;
@@ -183,7 +182,7 @@
 - (IBAction) openFirewall:(id) sender;
 - (IBAction) openLog:(id) sender;
 - (IBAction) openGPL:(id) sender;
-- (IBAction) openReleaseNotes:(id) sender;
+//- (IBAction) openReleaseNotes:(id) sender;
 - (IBAction) openFile:(id) sender;
 
 - (IBAction) installAsService: sender;

@@ -11,7 +11,6 @@
 		500C69E21047E65F00469C40 /* ANSystemSoundWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 500C69E11047E65F00469C40 /* ANSystemSoundWrapper.m */; };
 		502C5673104FE4760010215C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABEE28F804C8745B00A80117 /* Security.framework */; };
 		9199995B0B1135FF0099EA7A /* getMACAddress.c in Sources */ = {isa = PBXBuildFile; fileRef = 919999430B11348E0099EA7A /* getMACAddress.c */; };
-		99B5256F1061737F0090EDB4 /* HippoVNC Release Notes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 99B5256D1061737F0090EDB4 /* HippoVNC Release Notes.rtf */; };
 		99F1B9951067CC87006C4226 /* HippoVNC.icns in Resources */ = {isa = PBXBuildFile; fileRef = 99F1B9941067CC87006C4226 /* HippoVNC.icns */; };
 		AB056F7B0CDF7C0D00C0AAB0 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABEE28F804C8745B00A80117 /* Security.framework */; };
 		AB0CBFA70CCD1C8000C74547 /* TigerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AB0CBFA60CCD1C7900C74547 /* TigerExtensions.m */; };
@@ -60,7 +59,6 @@
 		AB25DA3B0868842E0065843D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB25DA3A0868842E0065843D /* IOKit.framework */; };
 		AB25DA3D086884420065843D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB25DA3C086884420065843D /* libz.dylib */; };
 		AB25DA5108688E100065843D /* JaguarBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = AB25D87E08686C7D0065843D /* JaguarBundle.bundle */; };
-		AB3E27F80AF947FB004AF567 /* Vine Server.pdf in Resources */ = {isa = PBXBuildFile; fileRef = AB3E27F70AF947FB004AF567 /* Vine Server.pdf */; };
 		AB82605A08689AC00010AB63 /* storepasswd in CopyFiles */ = {isa = PBXBuildFile; fileRef = AB82605708689AC00010AB63 /* storepasswd */; };
 		AB82605E08689AC00010AB63 /* OSXvnc-server in CopyFiles */ = {isa = PBXBuildFile; fileRef = AB82605B08689AC00010AB63 /* OSXvnc-server */; };
 		ABA7B3D60948CB5D00CD7499 /* d3des.c in Sources */ = {isa = PBXBuildFile; fileRef = ABA7B3D10948CB5D00CD7499 /* d3des.c */; };
@@ -211,7 +209,6 @@
 		500C69E11047E65F00469C40 /* ANSystemSoundWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ANSystemSoundWrapper.m; sourceTree = "<group>"; };
 		919999420B11348C0099EA7A /* getMACAddress.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = getMACAddress.h; sourceTree = "<group>"; };
 		919999430B11348E0099EA7A /* getMACAddress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; path = getMACAddress.c; sourceTree = "<group>"; };
-		99B5256E1061737F0090EDB4 /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = "English.lproj/HippoVNC Release Notes.rtf"; sourceTree = "<group>"; };
 		99F1B9941067CC87006C4226 /* HippoVNC.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = HippoVNC.icns; sourceTree = "<group>"; };
 		AB0CBF9C0CCD1C0500C74547 /* TigerBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TigerBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB0CBF9D0CCD1C0500C74547 /* TigerBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TigerBundle-Info.plist"; sourceTree = "<group>"; };
@@ -229,7 +226,6 @@
 		AB25DA9C0868987B0065843D /* French */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = French; path = French.lproj/Copying.rtf; sourceTree = "<group>"; };
 		AB3598E904BF8A6500A80117 /* JaguarExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JaguarExtensions.h; sourceTree = "<group>"; };
 		AB3598EA04BF8A6500A80117 /* JaguarExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JaguarExtensions.m; sourceTree = "<group>"; };
-		AB3E27F70AF947FB004AF567 /* Vine Server.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Vine Server.pdf"; sourceTree = "<group>"; };
 		AB41881F04C5986E00A80117 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		AB82605708689AC00010AB63 /* storepasswd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = storepasswd; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB82605B08689AC00010AB63 /* OSXvnc-server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "OSXvnc-server"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -611,8 +607,6 @@
 			isa = PBXGroup;
 			children = (
 				99F1B9941067CC87006C4226 /* HippoVNC.icns */,
-				99B5256D1061737F0090EDB4 /* HippoVNC Release Notes.rtf */,
-				AB3E27F70AF947FB004AF567 /* Vine Server.pdf */,
 				096B69DC0097995A7F000001 /* OSXvnc.html */,
 				ABCCC8B203D9C60A00A80117 /* OSXvnc */,
 				ABD7FE7E07AFF8B4004D0B81 /* Localizable.strings */,
@@ -1140,8 +1134,6 @@
 				AB25DA5108688E100065843D /* JaguarBundle.bundle in Resources */,
 				AB0CC2020CCD4C4300C74547 /* TigerBundle.bundle in Resources */,
 				AB25D82608686B520065843D /* OSXvnc in Resources */,
-				AB3E27F80AF947FB004AF567 /* Vine Server.pdf in Resources */,
-				99B5256F1061737F0090EDB4 /* HippoVNC Release Notes.rtf in Resources */,
 				99F1B9951067CC87006C4226 /* HippoVNC.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1389,14 +1381,6 @@
 				29B97319FDCFA39411CA2CEA /* English */,
 			);
 			name = MainMenu.nib;
-			sourceTree = "<group>";
-		};
-		99B5256D1061737F0090EDB4 /* HippoVNC Release Notes.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				99B5256E1061737F0090EDB4 /* English */,
-			);
-			name = "HippoVNC Release Notes.rtf";
 			sourceTree = "<group>";
 		};
 		AB541C3B07A0273500B63668 /* Copying.rtf */ = {

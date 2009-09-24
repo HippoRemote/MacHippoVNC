@@ -1021,9 +1021,10 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 													 @"end if\n" \
 													 @"set newVolume to round (scaledVolume / 16 * 100)\n" \
 													 @"set volume output volume newVolume\n"];
-							NSDictionary  *errors;
+							NSDictionary  *errors = nil;
 							NSAppleEventDescriptor *result = NULL;
 							result = [script executeAndReturnError:&errors];
+							[errors release];
 							[script release];
 						}
 						[pool drain];
@@ -1044,9 +1045,10 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 													 @"set volume output volume newVolume\n"];
 							
 							
-							NSDictionary  *errors;
+							NSDictionary  *errors = nil;
 							NSAppleEventDescriptor *result = NULL;
 							result = [script executeAndReturnError:&errors];
+							[errors release];
 							[script release];
 						}
 						[pool drain];
@@ -1056,9 +1058,10 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 					// sleep
 					if (keyCode == 0xf8ff) {
 						NSAppleScript *script = [[NSAppleScript alloc] initWithSource:@"tell application \"Finder\" to sleep"];
-						NSDictionary  *errors;
+						NSDictionary  *errors = nil;
 						NSAppleEventDescriptor *result = NULL;
 						result = [script executeAndReturnError:&errors];
+						[errors release];
 						[script release];
 						[pool drain];
 						return;
@@ -1250,9 +1253,10 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 			if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableAppLaunching"]) {
 				if ([profile hasPrefix:@"Front Row"]) {
 					NSAppleScript *script = [[NSAppleScript alloc] initWithSource:@"tell application \"System Events\" to key code 53 using command down"];
-					NSDictionary  *errors;
+					NSDictionary  *errors = nil;
 					NSAppleEventDescriptor *result = NULL;
 					result = [script executeAndReturnError:&errors];
+					[errors release];
 					[script release];
 				}				
 				else {	

@@ -710,7 +710,6 @@ NSMutableArray *localIPAddresses() {
 	}
 	
 	[disableStartupButton setEnabled:systemServerIsConfigured];
-	[systemServerMenu setState: (systemServerIsConfigured ? NSOnState : NSOffState)];
 	[setStartupButton setTitle: (systemServerIsConfigured ? LocalizedString(@"Restart System Server") : LocalizedString(@"Start System Server"))];
 }
 
@@ -964,7 +963,7 @@ NSMutableArray *localIPAddresses() {
 		[startServerButton setTitle:LocalizedString(@"Restart Server")];
 		[startServerMenuItem setTitle:LocalizedString(@"Restart Server")];
         [stopServerButton setEnabled:TRUE];
-		[serverMenuItem setState: NSOnState];
+//		[serverMenuItem setState: NSOnState];
 		// We really don't want people to accidentally stop the server
         //[startServerButton setKeyEquivalent:@""];
         //[stopServerButton setKeyEquivalent:@"\r"];
@@ -1017,7 +1016,7 @@ NSMutableArray *localIPAddresses() {
 	[startServerMenuItem setTitle:LocalizedString(@"Start Server")];
     //[startServerButton setEnabled:TRUE];
     [stopServerButton setEnabled:FALSE];
-	[serverMenuItem setState: NSOffState];
+//	[serverMenuItem setState: NSOffState];
 	//[stopServerButton setKeyEquivalent:@""];
     //[startServerButton setKeyEquivalent:@"\r"];
 
@@ -1512,11 +1511,13 @@ NSMutableArray *localIPAddresses() {
     [[NSWorkspace sharedWorkspace] openFile:openPath];
 }
 
+/*
 - (IBAction) openReleaseNotes:(id) sender {
     NSString *openPath = [[NSBundle mainBundle] pathForResource:@"HippoVNC Release Notes" ofType:@"rtf"];
 	
     [[NSWorkspace sharedWorkspace] openFile:openPath];
 }
+ */
 
 - (IBAction) openFile:(id) sender {
     NSString *openPath = [[NSBundle mainBundle] pathForResource:[sender title] ofType:@"rtf"];

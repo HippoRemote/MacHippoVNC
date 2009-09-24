@@ -26,8 +26,6 @@
 	<string>vncS</string>
 	<key>CFBundleVersion</key>
 	<string>1022</string>
-	<key>NSHelpFile</key>
-	<string>Vine Server.pdf</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright© 2009 RoboHippo LLC</string>
 	<key>NSMainNibFile</key>
