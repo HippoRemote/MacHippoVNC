@@ -178,6 +178,8 @@
 
 - (BOOL) validateMenuItem: (NSMenuItem *) menuItem ;
 
+- (IBAction) openSystemServerPreferences: sender;
+
 // Menu Items
 - (IBAction) openFirewall:(id) sender;
 - (IBAction) openLog:(id) sender;

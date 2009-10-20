@@ -60,6 +60,8 @@
 				<string>id</string>
 				<key>openLog</key>
 				<string>id</string>
+				<key>openSystemServerPreferences</key>
+				<string>id</string>
 				<key>optionChanged</key>
 				<string>id</string>
 				<key>removeService</key>

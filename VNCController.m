@@ -177,7 +177,7 @@ NSMutableArray *localIPAddresses() {
         @"", @"LogFile",
 		[NSString stringWithFormat:@"%@ (%@)", hostName, NSUserName()], @"desktopName",
 		
-		@"5900", @"portNumberSystemServer", 
+//		@"5900", @"portNumberSystemServer",			// Remove so that "Auto" is selected in System Preferences by default
 		hostName, @"desktopNameSystemServer", 
 
 		@"NO", @"allowSleep",
@@ -1492,6 +1492,11 @@ NSMutableArray *localIPAddresses() {
     }
 
     return TRUE;
+}
+
+- (IBAction) openSystemServerPreferences:(id) sender {
+	[preferenceWindow makeKeyAndOrderFront:sender];
+	[optionsTabView selectTabViewItemAtIndex:1];
 }
 
 - (IBAction) openFirewall:(id) sender {

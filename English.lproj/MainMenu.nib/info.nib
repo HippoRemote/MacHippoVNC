@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>IBFramework Version</key>
-	<string>677</string>
+	<string>680</string>
 	<key>IBLastKnownRelativeProjectPath</key>
 	<string>../OSXvnc.xcodeproj</string>
 	<key>IBOldestOS</key>
 	<integer>5</integer>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>651</integer>
 		<integer>81</integer>
+		<integer>2</integer>
 		<integer>678</integer>
 	</array>
 	<key>IBSystem Version</key>
