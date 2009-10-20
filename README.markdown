@@ -7,4 +7,8 @@ HippoVNC is a fork of Vine Server for use with HippoRemote.
 
 ##Version History
 
+* **0.1.1**
+	* [CHANGED] Moved all system server configuration into preferences.
+	* [CHANGED] System server now defaults display setting to Auto.
+
 * **0.1.0** Initial release.
