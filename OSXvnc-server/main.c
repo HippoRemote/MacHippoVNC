@@ -266,21 +266,19 @@ void displayReconfigurationCallback (
 	while ((cl = rfbClientIteratorNext(iterator)) != NULL) {
 
 		CGError error = CGGetActiveDisplayList(2, activeDisplays, &displayCount);
-		cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
-		if (cl->hasSecondaryDisplay)
-			cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);	
-/*		// DEBUG
-		printf("displayReconfigurationCallback: main display: (%f,%f), (%f,%f)\n", 
-			   cl->displayBounds[0].origin.x,
-			   cl->displayBounds[0].origin.y,
-			   cl->displayBounds[0].size.width,
-			   cl->displayBounds[0].size.height);
-		printf("displayReconfigurationCallback: secondary display: (%f,%f), (%f,%f)\n", 
-			   cl->displayBounds[1].origin.x,
-			   cl->displayBounds[1].origin.y,
-			   cl->displayBounds[1].size.width,
-			   cl->displayBounds[1].size.height);	
- */
+		if (kCGErrorSuccess == error)
+		{
+			cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
+			if ((cl->hasSecondaryDisplay) && (1 < displayCount))
+				cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);	
+		}
+		else
+		{
+			// Just use main display
+			cl->hasSecondaryDisplay = NO;
+			cl->ptrIsInMainDisplay = YES;
+			cl->displayBounds[0] = CGDisplayBounds(CGMainDisplayID());			
+		}
 	}
 	rfbReleaseClientIterator(iterator);
 

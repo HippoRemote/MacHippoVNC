@@ -399,24 +399,21 @@ rfbClientPtr rfbNewClient(int sock) {
 	CGDirectDisplayID activeDisplays[2];
 	CGDisplayCount displayCount;
 	CGError error = CGGetActiveDisplayList(2, activeDisplays, &displayCount);
+	if (kCGErrorSuccess == error)
+	{
 	cl->hasSecondaryDisplay = (displayCount > 1);
 	cl->ptrIsInMainDisplay = YES;	// always start in main display
 	cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
 	if (cl->hasSecondaryDisplay)
 		cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);
-
-	// DEBUG
-/*	int j;
-	for (j=0; j<displayCount; j++)
-	{
-		CGRect rect = CGDisplayBounds(activeDisplays[j]);
-		NSLog(@"Display %d: origin(%f,%f); bounds=(%f,%f)", j, rect.origin.x, rect.origin.y,
-			  rect.size.width, rect.size.height);
-		NSLog(@"Display %d: pixels (%f, %f)", j, CGDisplayPixelsHigh(activeDisplays[j]),
-			  CGDisplayPixelsWide(activeDisplays[j]), CGDisplayPixelsHigh(activeDisplays[j]));
 	}
-*/	
-	
+	else
+	{
+		// Just use main display
+		cl->hasSecondaryDisplay = NO;
+		cl->ptrIsInMainDisplay = YES;
+		cl->displayBounds[0] = CGDisplayBounds(CGMainDisplayID());
+	}	
     
     sprintf(pv,rfbProtocolVersionFormat,rfbProtocolMajorVersion, rfbProtocolMinorVersion);
 
