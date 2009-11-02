@@ -259,24 +259,27 @@ void displayReconfigurationCallback (
 	rfbClientIteratorPtr iterator;
     rfbClientPtr cl = NULL;
 
-	CGDirectDisplayID activeDisplays[2];
+	CGDirectDisplayID activeDisplays[RH_MAX_DISPLAYS];
 	CGDisplayCount displayCount;
 
 	iterator = rfbGetClientIterator();
 	while ((cl = rfbClientIteratorNext(iterator)) != NULL) {
 
-		CGError error = CGGetActiveDisplayList(2, activeDisplays, &displayCount);
+		CGError error = CGGetActiveDisplayList(RH_MAX_DISPLAYS, activeDisplays, &displayCount);
 		if (kCGErrorSuccess == error)
 		{
-			cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
-			if ((cl->hasSecondaryDisplay) && (1 < displayCount))
-				cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);	
+			cl->numberOfDisplays = displayCount;
+			int i;
+			for (i=0; i<displayCount; i++)
+			{
+				cl->displayBounds[i] = CGDisplayBounds(activeDisplays[i]);
+			}
 		}
 		else
 		{
 			// Just use main display
-			cl->hasSecondaryDisplay = NO;
-			cl->ptrIsInMainDisplay = YES;
+			cl->whichDisplayIndex = 0;
+			cl->numberOfDisplays = 1;
 			cl->displayBounds[0] = CGDisplayBounds(CGMainDisplayID());			
 		}
 	}

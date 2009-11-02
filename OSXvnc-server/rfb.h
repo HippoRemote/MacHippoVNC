@@ -65,6 +65,7 @@ typedef struct CGRect CGRect;
 #endif
 
 #define MAX_ENCODINGS 17
+#define RH_MAX_DISPLAYS	5		// RoboHippo: Max number of displays supported
 
 /*
  * Per-screen (framebuffer) structure.  There is only one of these, since we
@@ -344,10 +345,10 @@ typedef struct rfbClientRec {
 	
 	BOOL isLoggedIn;
 	
-	// RoboHippo: To support dual monitor setups
-	BOOL hasSecondaryDisplay;
-	BOOL ptrIsInMainDisplay;
-	CGRect displayBounds[2];
+	// RoboHippo: To support multiple monitors
+	int whichDisplayIndex;		// Index into displayBounds where the last point was in. (0 for main display)
+	int numberOfDisplays;
+	CGRect displayBounds[RH_MAX_DISPLAYS];	// displayBounds[0] is always for the main display
 } rfbClientRec, *rfbClientPtr;
 
 

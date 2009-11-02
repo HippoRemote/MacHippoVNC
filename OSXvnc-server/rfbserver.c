@@ -395,23 +395,25 @@ rfbClientPtr rfbNewClient(int sock) {
 		cl->isLoggedIn = NO;
 	}
 
-	// RoboHippo: Dual screen support info
-	CGDirectDisplayID activeDisplays[2];
+	// RoboHippo: Multiple screen support info
+	CGDirectDisplayID activeDisplays[RH_MAX_DISPLAYS];
 	CGDisplayCount displayCount;
-	CGError error = CGGetActiveDisplayList(2, activeDisplays, &displayCount);
+	CGError error = CGGetActiveDisplayList(RH_MAX_DISPLAYS, activeDisplays, &displayCount);
 	if (kCGErrorSuccess == error)
 	{
-	cl->hasSecondaryDisplay = (displayCount > 1);
-	cl->ptrIsInMainDisplay = YES;	// always start in main display
-	cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
-	if (cl->hasSecondaryDisplay)
-		cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);
+		cl->numberOfDisplays = displayCount;
+		cl->whichDisplayIndex = 0;	// always start in main display
+		int i;
+		for (i=0; i<displayCount; i++)
+		{
+			cl->displayBounds[i] = CGDisplayBounds(activeDisplays[i]);
+		}
 	}
 	else
 	{
 		// Just use main display
-		cl->hasSecondaryDisplay = NO;
-		cl->ptrIsInMainDisplay = YES;
+		cl->numberOfDisplays = 1;
+		cl->whichDisplayIndex = 0;	// always the main display
 		cl->displayBounds[0] = CGDisplayBounds(CGMainDisplayID());
 	}	
     
@@ -1344,25 +1346,25 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 				// Need to remove offset of 32768 since this amount was added by HippoRemote
 				x += cl->clientCursorLocation.x - 32768;
 				y += cl->clientCursorLocation.y - 32768;
-				// Check if needs to be clipped
-				// Is point in main display?
-				// If not, is it in secondary display? (if it exists)
-				// If not in either, clip based on the display the last point was in
+				// Check if needs to be clipped:
+				// Go through the displays, starting with the main, to see if
+				// point can be in that display.
+				// If the point's coordinates aren't valid for any of the displays,
+				// clip based on the display the last point was in.
 				BOOL pointIsValid = NO;
-				if (isInXCoordinateOfDisplay(x, cl->displayBounds[0]) && isInYCoordinateOfDisplay(y, cl->displayBounds[0]))
+				int i = 0;
+				while ((i < cl->numberOfDisplays) && !pointIsValid)
 				{
-					cl->ptrIsInMainDisplay = YES;
-					pointIsValid = YES;
+					if (isInXCoordinateOfDisplay(x, cl->displayBounds[i]) && isInYCoordinateOfDisplay(y, cl->displayBounds[i]))
+					{
+						cl->whichDisplayIndex = i;
+						pointIsValid = YES;
+					}
+					i++;
 				}
-				else if (cl->hasSecondaryDisplay && 
-					(isInXCoordinateOfDisplay(x, cl->displayBounds[1]) && isInYCoordinateOfDisplay(y, cl->displayBounds[1])))
+				if (!pointIsValid)		// Need to clip
 				{
-					cl->ptrIsInMainDisplay = NO;
-					pointIsValid = YES;
-				}
-				if (!pointIsValid)
-				{
-					int whichDisplay = (cl->ptrIsInMainDisplay) ? 0 : 1;
+					int whichDisplay = cl->whichDisplayIndex;
 					int xMax = cl->displayBounds[whichDisplay].origin.x + cl->displayBounds[whichDisplay].size.width - 1;
 					int yMax = cl->displayBounds[whichDisplay].origin.y + cl->displayBounds[whichDisplay].size.height - 1;
 					if (x < cl->displayBounds[whichDisplay].origin.x)
