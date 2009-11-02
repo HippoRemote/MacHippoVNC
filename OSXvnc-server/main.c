@@ -247,6 +247,45 @@ void loadDynamicBundles(BOOL startup) {
     [startPool release];
 }
 
+// This is called when the display arrangement is changed
+// (e.g. move secondary display to different position relative to main)
+void displayReconfigurationCallback (
+									   CGDirectDisplayID display,
+									   CGDisplayChangeSummaryFlags flags,
+									   void *userInfo)
+{
+	// Need to update the display bounds for each connection
+	
+	rfbClientIteratorPtr iterator;
+    rfbClientPtr cl = NULL;
+
+	CGDirectDisplayID activeDisplays[2];
+	CGDisplayCount displayCount;
+
+	iterator = rfbGetClientIterator();
+	while ((cl = rfbClientIteratorNext(iterator)) != NULL) {
+
+		CGError error = CGGetActiveDisplayList(2, activeDisplays, &displayCount);
+		cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
+		if (cl->hasSecondaryDisplay)
+			cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);	
+/*		// DEBUG
+		printf("displayReconfigurationCallback: main display: (%f,%f), (%f,%f)\n", 
+			   cl->displayBounds[0].origin.x,
+			   cl->displayBounds[0].origin.y,
+			   cl->displayBounds[0].size.width,
+			   cl->displayBounds[0].size.height);
+		printf("displayReconfigurationCallback: secondary display: (%f,%f), (%f,%f)\n", 
+			   cl->displayBounds[1].origin.x,
+			   cl->displayBounds[1].origin.y,
+			   cl->displayBounds[1].size.width,
+			   cl->displayBounds[1].size.height);	
+ */
+	}
+	rfbReleaseClientIterator(iterator);
+
+}
+
 void refreshCallback(CGRectCount count, const CGRect *rectArray, void *ignore) {
     BoxRec box;
     RegionRec region;
@@ -485,6 +524,10 @@ void *clientInput(void *data) {
 			//CGScreenRegisterMoveCallback(screenUpdateMoveCallback, NULL);
             registered = TRUE;
         }
+		CGError result = CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallback, NULL);
+		if (result != kCGErrorSuccess) {
+			NSLog(@"Error (%d) registering for Display Reconfiguration Notification", result);
+		}
         
         if (cl->sock == -1) {
             /* Client has disconnected. */
@@ -932,6 +975,7 @@ void rfbShutdown(void) {
     [bundleArray release];
 
     CGUnregisterScreenRefreshCallback(refreshCallback, NULL);
+	CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallback, NULL);
     //CGDisplayShowCursor(displayID);
     rfbDimmingShutdown();
 

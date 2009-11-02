@@ -45,6 +45,23 @@ struct CGPoint {
     float y;
 };
 typedef struct CGPoint CGPoint;
+
+/* Sizes. */
+
+struct CGSize {
+    float width;
+    float height;
+};
+typedef struct CGSize CGSize;
+
+/* Rectangles. */
+
+struct CGRect {
+    CGPoint origin;
+    CGSize size;
+};
+typedef struct CGRect CGRect;
+
 #endif
 
 #define MAX_ENCODINGS 17
@@ -326,6 +343,11 @@ typedef struct rfbClientRec {
 	unsigned char profileLen;
 	
 	BOOL isLoggedIn;
+	
+	// RoboHippo: To support dual monitor setups
+	BOOL hasSecondaryDisplay;
+	BOOL ptrIsInMainDisplay;
+	CGRect displayBounds[2];
 } rfbClientRec, *rfbClientPtr;
 
 
@@ -491,6 +513,7 @@ extern void rfbSendServerCutText(rfbClientPtr cl, char *str, int len);
 
 extern void setScaling (rfbClientPtr cl);
 extern void CopyScalingRect( rfbClientPtr cl, int* x, int* y, int* w, int* h, Bool bDoScaling );
+
 
 /* translate.c */
 

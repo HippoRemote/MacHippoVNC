@@ -395,6 +395,27 @@ rfbClientPtr rfbNewClient(int sock) {
 		cl->isLoggedIn = NO;
 	}
 
+	// RoboHippo: Dual screen support info
+	CGDirectDisplayID activeDisplays[2];
+	CGDisplayCount displayCount;
+	CGError error = CGGetActiveDisplayList(2, activeDisplays, &displayCount);
+	cl->hasSecondaryDisplay = (displayCount > 1);
+	cl->ptrIsInMainDisplay = YES;	// always start in main display
+	cl->displayBounds[0] = CGDisplayBounds(activeDisplays[0]);		// First display is always the main display
+	if (cl->hasSecondaryDisplay)
+		cl->displayBounds[1] = CGDisplayBounds(activeDisplays[1]);
+
+	// DEBUG
+/*	int j;
+	for (j=0; j<displayCount; j++)
+	{
+		CGRect rect = CGDisplayBounds(activeDisplays[j]);
+		NSLog(@"Display %d: origin(%f,%f); bounds=(%f,%f)", j, rect.origin.x, rect.origin.y,
+			  rect.size.width, rect.size.height);
+		NSLog(@"Display %d: pixels (%f, %f)", j, CGDisplayPixelsHigh(activeDisplays[j]),
+			  CGDisplayPixelsWide(activeDisplays[j]), CGDisplayPixelsHigh(activeDisplays[j]));
+	}
+*/	
 	
     
     sprintf(pv,rfbProtocolVersionFormat,rfbProtocolMajorVersion, rfbProtocolMinorVersion);
@@ -739,6 +760,15 @@ CGKeyCode keyCodeForKeyboard(const UCKeyboardLayout *uchrHeader, UTF16Char theCh
 		}
 	}
 	return (CGKeyCode)virtualKeyCode;
+}
+
+// Helper methods
+BOOL isInXCoordinateOfDisplay(int x, CGRect displayBounds) {
+	return ((x >= displayBounds.origin.x) && (x < displayBounds.origin.x + displayBounds.size.width));
+}
+
+BOOL isInYCoordinateOfDisplay(int y, CGRect displayBounds) {
+	return ((y >= displayBounds.origin.y) && (y < displayBounds.origin.y + displayBounds.size.height));
 }
 
 
@@ -1289,6 +1319,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 			return;
 		}
 			
+		case 25:	// Use delta mouse events
         case rfbPointerEvent: {
             if (!cl->disableRemoteEvents)
                 cl->rfbPointerEventsRcvd++;
@@ -1308,9 +1339,48 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
             else
                 pointerClient = cl;
 
+			int x = (Swap16IfLE(msg.pe.x)+cl->scalingFactor-1)*cl->scalingFactor;
+			int y = (Swap16IfLE(msg.pe.y)+cl->scalingFactor-1)*cl->scalingFactor;
+
+			if (25 == msg.type)	// delta mouse movements
+			{
+				// Need to remove offset of 32768 since this amount was added by HippoRemote
+				x += cl->clientCursorLocation.x - 32768;
+				y += cl->clientCursorLocation.y - 32768;
+				// Check if needs to be clipped
+				// Is point in main display?
+				// If not, is it in secondary display? (if it exists)
+				// If not in either, clip based on the display the last point was in
+				BOOL pointIsValid = NO;
+				if (isInXCoordinateOfDisplay(x, cl->displayBounds[0]) && isInYCoordinateOfDisplay(y, cl->displayBounds[0]))
+				{
+					cl->ptrIsInMainDisplay = YES;
+					pointIsValid = YES;
+				}
+				else if (cl->hasSecondaryDisplay && 
+					(isInXCoordinateOfDisplay(x, cl->displayBounds[1]) && isInYCoordinateOfDisplay(y, cl->displayBounds[1])))
+				{
+					cl->ptrIsInMainDisplay = NO;
+					pointIsValid = YES;
+				}
+				if (!pointIsValid)
+				{
+					int whichDisplay = (cl->ptrIsInMainDisplay) ? 0 : 1;
+					int xMax = cl->displayBounds[whichDisplay].origin.x + cl->displayBounds[whichDisplay].size.width - 1;
+					int yMax = cl->displayBounds[whichDisplay].origin.y + cl->displayBounds[whichDisplay].size.height - 1;
+					if (x < cl->displayBounds[whichDisplay].origin.x)
+						x = cl->displayBounds[whichDisplay].origin.x;
+					else if (x > xMax)
+						x = xMax;
+					if (y < cl->displayBounds[whichDisplay].origin.y)
+						y = cl->displayBounds[whichDisplay].origin.y;
+					else if (y > yMax)
+						y = yMax;
+				}
+			}
             PtrAddEvent(msg.pe.buttonMask,
-                (Swap16IfLE(msg.pe.x)+cl->scalingFactor-1)*cl->scalingFactor,
-                (Swap16IfLE(msg.pe.y)+cl->scalingFactor-1)*cl->scalingFactor,
+				x,
+				y,
                 cl);
 
             return;
@@ -1428,6 +1498,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 		}
     }
 }
+
 
 /*
  * rfbSendFramebufferUpdate - send the currently pending framebuffer update to
@@ -1895,3 +1966,4 @@ void CopyScalingRect( rfbClientPtr cl, int* x, int* y, int* w, int* h, Bool bDoS
     *x = cx;
     *w = cw;
 }
+
