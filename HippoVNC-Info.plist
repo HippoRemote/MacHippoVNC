@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.1.2 - Copyright© 2009 RoboHippo LLC </string>
+	<string>0.2.0 - Copyright© 2009 RoboHippo LLC </string>
 	<key>CFBundleIconFile</key>
 	<string>HippoVNC.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -19,9 +19,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersion</key>
-	<string>0.1.2</string>
+	<string>0.2.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1.2</string>
+	<string>0.2.0</string>
 	<key>CFBundleSignature</key>
 	<string>vncS</string>
 	<key>CFBundleVersion</key>
