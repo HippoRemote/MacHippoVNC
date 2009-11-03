@@ -250,6 +250,8 @@ rfbClientPtr rfbNewClient(int sock) {
 		cl->host = strdup(host);
 	}
 	if (!strlen(cl->host)) {
+		if (floor(NSAppKitVersionNumber) > floor(NSAppKitVersionNumber10_1))
+			free(cl->host);
 		struct sockaddr_in addr;
 		addrlen = sizeof(struct sockaddr_in);
 		getpeername(sock, (struct sockaddr *)&addr, &addrlen);
