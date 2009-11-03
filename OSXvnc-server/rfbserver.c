@@ -1320,7 +1320,7 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 			return;
 		}
 			
-		case 25:	// Use delta mouse events
+		case 25:	// Use relative positioning/delta mouse events
         case rfbPointerEvent: {
             if (!cl->disableRemoteEvents)
                 cl->rfbPointerEventsRcvd++;
@@ -1340,43 +1340,54 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
             else
                 pointerClient = cl;
 
-			int x = (Swap16IfLE(msg.pe.x)+cl->scalingFactor-1)*cl->scalingFactor;
-			int y = (Swap16IfLE(msg.pe.y)+cl->scalingFactor-1)*cl->scalingFactor;
+			// If using relative positioning/delta mouse events, 
+			// need to remove offset of 32768 since this amount was added by HippoRemote.
+			int relativePositionOffset = (25 == msg.type) ? 32768 : 0;
+			int x = (Swap16IfLE(msg.pe.x)-relativePositionOffset+cl->scalingFactor-1)*cl->scalingFactor;
+			int y = (Swap16IfLE(msg.pe.y)-relativePositionOffset+cl->scalingFactor-1)*cl->scalingFactor;
 
 			if (25 == msg.type)	// delta mouse movements
 			{
-				// Need to remove offset of 32768 since this amount was added by HippoRemote
-				x += cl->clientCursorLocation.x - 32768;
-				y += cl->clientCursorLocation.y - 32768;
-				// Check if needs to be clipped:
-				// Go through the displays, starting with the main, to see if
-				// point can be in that display.
-				// If the point's coordinates aren't valid for any of the displays,
-				// clip based on the display the last point was in.
-				BOOL pointIsValid = NO;
-				int i = 0;
-				while ((i < cl->numberOfDisplays) && !pointIsValid)
+				// If there was a button press, no need to update the location.
+				if (msg.pe.buttonMask)
 				{
-					if (isInXCoordinateOfDisplay(x, cl->displayBounds[i]) && isInYCoordinateOfDisplay(y, cl->displayBounds[i]))
-					{
-						cl->whichDisplayIndex = i;
-						pointIsValid = YES;
-					}
-					i++;
+					x = cl->clientCursorLocation.x;
+					y = cl->clientCursorLocation.y;
 				}
-				if (!pointIsValid)		// Need to clip
+				else
 				{
-					int whichDisplay = cl->whichDisplayIndex;
-					int xMax = cl->displayBounds[whichDisplay].origin.x + cl->displayBounds[whichDisplay].size.width - 1;
-					int yMax = cl->displayBounds[whichDisplay].origin.y + cl->displayBounds[whichDisplay].size.height - 1;
-					if (x < cl->displayBounds[whichDisplay].origin.x)
-						x = cl->displayBounds[whichDisplay].origin.x;
-					else if (x > xMax)
-						x = xMax;
-					if (y < cl->displayBounds[whichDisplay].origin.y)
-						y = cl->displayBounds[whichDisplay].origin.y;
-					else if (y > yMax)
-						y = yMax;
+					x += cl->clientCursorLocation.x;
+					y += cl->clientCursorLocation.y;
+					// Check if needs to be clipped:
+					// Go through the displays, starting with the main, to see if
+					// the point can be in that display.
+					// If the point's coordinates aren't valid for any of the displays,
+					// clip based on the display the last point was in.
+					BOOL pointIsValid = NO;
+					int i = 0;
+					while ((i < cl->numberOfDisplays) && !pointIsValid)
+					{
+						if (isInXCoordinateOfDisplay(x, cl->displayBounds[i]) && isInYCoordinateOfDisplay(y, cl->displayBounds[i]))
+						{
+							cl->whichDisplayIndex = i;
+							pointIsValid = YES;
+						}
+						i++;
+					}
+					if (!pointIsValid)		// Need to clip
+					{
+						int whichDisplay = cl->whichDisplayIndex;
+						int xMax = cl->displayBounds[whichDisplay].origin.x + cl->displayBounds[whichDisplay].size.width - 1;
+						int yMax = cl->displayBounds[whichDisplay].origin.y + cl->displayBounds[whichDisplay].size.height - 1;
+						if (x < cl->displayBounds[whichDisplay].origin.x)
+							x = cl->displayBounds[whichDisplay].origin.x;
+						else if (x > xMax)
+							x = xMax;
+						if (y < cl->displayBounds[whichDisplay].origin.y)
+							y = cl->displayBounds[whichDisplay].origin.y;
+						else if (y > yMax)
+							y = yMax;
+					}
 				}
 			}
             PtrAddEvent(msg.pe.buttonMask,
