@@ -1348,46 +1348,37 @@ void rfbProcessClientNormalMessage(rfbClientPtr cl) {
 
 			if (25 == msg.type)	// delta mouse movements
 			{
-				// If there was a button press, no need to update the location.
-				if (msg.pe.buttonMask)
+				x += cl->clientCursorLocation.x;
+				y += cl->clientCursorLocation.y;
+				// Check if needs to be clipped:
+				// Go through the displays, starting with the main, to see if
+				// the point can be in that display.
+				// If the point's coordinates aren't valid for any of the displays,
+				// clip based on the display the last point was in.
+				BOOL pointIsValid = NO;
+				int i = 0;
+				while ((i < cl->numberOfDisplays) && !pointIsValid)
 				{
-					x = cl->clientCursorLocation.x;
-					y = cl->clientCursorLocation.y;
+					if (isInXCoordinateOfDisplay(x, cl->displayBounds[i]) && isInYCoordinateOfDisplay(y, cl->displayBounds[i]))
+					{
+						cl->whichDisplayIndex = i;
+						pointIsValid = YES;
+					}
+					i++;
 				}
-				else
+				if (!pointIsValid)		// Need to clip
 				{
-					x += cl->clientCursorLocation.x;
-					y += cl->clientCursorLocation.y;
-					// Check if needs to be clipped:
-					// Go through the displays, starting with the main, to see if
-					// the point can be in that display.
-					// If the point's coordinates aren't valid for any of the displays,
-					// clip based on the display the last point was in.
-					BOOL pointIsValid = NO;
-					int i = 0;
-					while ((i < cl->numberOfDisplays) && !pointIsValid)
-					{
-						if (isInXCoordinateOfDisplay(x, cl->displayBounds[i]) && isInYCoordinateOfDisplay(y, cl->displayBounds[i]))
-						{
-							cl->whichDisplayIndex = i;
-							pointIsValid = YES;
-						}
-						i++;
-					}
-					if (!pointIsValid)		// Need to clip
-					{
-						int whichDisplay = cl->whichDisplayIndex;
-						int xMax = cl->displayBounds[whichDisplay].origin.x + cl->displayBounds[whichDisplay].size.width - 1;
-						int yMax = cl->displayBounds[whichDisplay].origin.y + cl->displayBounds[whichDisplay].size.height - 1;
-						if (x < cl->displayBounds[whichDisplay].origin.x)
-							x = cl->displayBounds[whichDisplay].origin.x;
-						else if (x > xMax)
-							x = xMax;
-						if (y < cl->displayBounds[whichDisplay].origin.y)
-							y = cl->displayBounds[whichDisplay].origin.y;
-						else if (y > yMax)
-							y = yMax;
-					}
+					int whichDisplay = cl->whichDisplayIndex;
+					int xMax = cl->displayBounds[whichDisplay].origin.x + cl->displayBounds[whichDisplay].size.width - 1;
+					int yMax = cl->displayBounds[whichDisplay].origin.y + cl->displayBounds[whichDisplay].size.height - 1;
+					if (x < cl->displayBounds[whichDisplay].origin.x)
+						x = cl->displayBounds[whichDisplay].origin.x;
+					else if (x > xMax)
+						x = xMax;
+					if (y < cl->displayBounds[whichDisplay].origin.y)
+						y = cl->displayBounds[whichDisplay].origin.y;
+					else if (y > yMax)
+						y = yMax;
 				}
 			}
             PtrAddEvent(msg.pe.buttonMask,
